@@ -1,15 +1,58 @@
-<section class="home-intro">
+<app-lighting-hero />
+
+<section class="intro" aria-label="Marka ifadesi">
   <app-container [wide]="true">
-    <div class="home-intro__content">
-      <p class="label">Mimari aydınlatma</p>
-      <h1 class="display">Işığın mekanı dönüştürmesine alan açın.</h1>
-      <p class="home-intro__lead body-lg">
-        TeknomLed storefront temeli. Immersive ana sayfa deneyimi bir sonraki
-        aşamada gelecek.
-      </p>
-      <div class="home-intro__actions">
-        <a routerLink="/products" class="home-intro__cta">Ürünleri keşfet</a>
-        <a routerLink="/projects" class="home-intro__link">Projeler</a>
+    <div class="intro__grid">
+      <h2 class="intro__title">
+        @for (line of intro.headingLines; track line) {
+          <span>{{ line }}</span>
+        }
+      </h2>
+      <p class="intro__text">{{ intro.text }}</p>
+    </div>
+  </app-container>
+</section>
+
+<app-category-showcase />
+
+<app-featured-project />
+
+<app-featured-products />
+
+<app-light-comparison />
+
+<app-project-showcase />
+
+<section class="trust" aria-label="Yaklaşımımız">
+  <app-container [wide]="true">
+    <p class="trust__statement">{{ trust.statement }}</p>
+    <ul class="trust__list">
+      @for (item of trust.highlights; track item.title) {
+        <li class="trust__item">
+          <h3 class="trust__title">{{ item.title }}</h3>
+          <p class="trust__text">{{ item.text }}</p>
+        </li>
+      }
+    </ul>
+  </app-container>
+</section>
+
+<section class="cta" aria-label="İletişim çağrısı">
+  <app-container [wide]="true">
+    <div class="cta__inner">
+      <h2 class="cta__title">{{ contactCta.title }}</h2>
+      <div class="cta__actions">
+        <a [routerLink]="contactCta.contactPath" class="cta__btn cta__btn--primary">
+          {{ contactCta.contactLabel }}
+        </a>
+        <a
+          class="cta__btn cta__btn--ghost"
+          [href]="contactCta.whatsappHref"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ contactCta.whatsappLabel }}
+        </a>
       </div>
     </div>
   </app-container>

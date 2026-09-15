@@ -1,4 +1,4 @@
-<header class="header">
+<header class="header" [class.is-open]="menuOpen()">
   <app-container [wide]="true">
     <div class="header__bar">
       <a routerLink="/" class="header__brand" (click)="closeMenu()">
@@ -6,7 +6,7 @@
       </a>
 
       <nav class="header__nav" aria-label="Ana menü">
-        @for (item of primaryNav; track item.path) {
+        @for (item of primaryNav; track item.label) {
           <a
             [routerLink]="item.path"
             routerLinkActive="is-active"
@@ -50,7 +50,7 @@
   >
     <app-container>
       <nav class="header__drawer-nav" aria-label="Mobil menü">
-        @for (item of primaryNav; track item.path) {
+        @for (item of primaryNav; track item.label) {
           <a
             [routerLink]="item.path"
             routerLinkActive="is-active"

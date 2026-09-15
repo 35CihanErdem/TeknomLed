@@ -1,0 +1,53 @@
+<section class="hero" aria-label="Ana görsel">
+  <div
+    #stage
+    class="hero__stage"
+    [class.hero__stage--fine]="finePointer()"
+    [class.hero__stage--static]="!finePointer()"
+  >
+    <!--
+      Future: reveal lightOnImage around cursor via mask over lightOffImage.
+      Prototype: cinematic night photo + warm feathered illumination spot.
+    -->
+    <div class="hero__photo hero__photo--off" aria-hidden="true">
+      <img
+        [src]="content.lightOffImage"
+        alt=""
+        width="2400"
+        height="1600"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+
+    <div class="hero__photo hero__photo--on">
+      <img
+        [src]="content.lightOnImage"
+        [alt]="content.imageAlt"
+        width="2400"
+        height="1600"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="hero__spot" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__content">
+    <p class="hero__eyebrow">{{ content.eyebrow }}</p>
+    <h1 class="hero__heading">
+      <span>{{ content.headingLead }}</span>
+      <em>{{ content.headingAccent }}</em>
+    </h1>
+    <p class="hero__lead">{{ content.supportingText }}</p>
+    <a [routerLink]="content.ctaPath" class="hero__cta">
+      {{ content.ctaLabel }}
+    </a>
+  </div>
+
+  @if (finePointer() && hintVisible()) {
+    <p class="hero__hint">{{ content.interactionHint }}</p>
+  }
+</section>

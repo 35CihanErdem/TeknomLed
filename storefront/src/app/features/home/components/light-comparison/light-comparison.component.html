@@ -1,0 +1,64 @@
+<section class="comparison">
+  <app-container [wide]="true">
+    <header class="comparison__header">
+      <p class="label">{{ eyebrow }}</p>
+      <h2 class="comparison__title">{{ title }}</h2>
+      <p class="comparison__desc">{{ description }}</p>
+    </header>
+
+    <div
+      #frame
+      class="comparison__frame"
+      [style.--reveal]="position() + '%'"
+      (pointerdown)="onPointerDown($event)"
+      (pointermove)="onPointerMove($event)"
+      (pointerup)="onPointerUp()"
+      (pointercancel)="onPointerUp()"
+    >
+      <div class="comparison__layer comparison__layer--off">
+        <img
+          [src]="lightOffImage"
+          [alt]="imageAlt"
+          width="2000"
+          height="1333"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+        <span class="comparison__badge">{{ beforeLabel }}</span>
+      </div>
+
+      <div class="comparison__layer comparison__layer--on" aria-hidden="true">
+        <img
+          [src]="lightOnImage"
+          alt=""
+          width="2000"
+          height="1333"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+        <span class="comparison__badge comparison__badge--on">{{
+          afterLabel
+        }}</span>
+      </div>
+
+      <div class="comparison__divider" aria-hidden="true">
+        <span class="comparison__handle"></span>
+      </div>
+
+      <label class="visually-hidden" for="light-compare-range">
+        Aydınlatma karşılaştırması
+      </label>
+      <input
+        id="light-compare-range"
+        class="comparison__range"
+        type="range"
+        min="0"
+        max="100"
+        [value]="position()"
+        (input)="onRangeInput($event)"
+      />
+    </div>
+  </app-container>
+</section>

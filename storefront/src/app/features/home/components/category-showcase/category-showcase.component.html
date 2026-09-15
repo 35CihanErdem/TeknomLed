@@ -1,0 +1,19 @@
+<section class="categories">
+  <app-container [wide]="true">
+    <div class="categories__grid">
+      @for (category of categories; track category.id) {
+        <a [routerLink]="category.path" class="categories__card">
+          <img
+            [src]="category.image"
+            [alt]="category.name"
+            width="1200"
+            height="1200"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="categories__label">{{ category.name }} →</span>
+        </a>
+      }
+    </div>
+  </app-container>
+</section>

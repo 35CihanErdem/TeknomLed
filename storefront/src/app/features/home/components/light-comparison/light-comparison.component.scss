@@ -1,0 +1,136 @@
+.comparison {
+  padding-block: var(--space-9);
+  background: var(--color-bg);
+}
+
+.comparison__header {
+  max-width: 34rem;
+  margin-bottom: var(--space-7);
+}
+
+.comparison__title {
+  margin-top: var(--space-3);
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 3.5vw, 2.85rem);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+}
+
+.comparison__desc {
+  margin-top: var(--space-4);
+  color: var(--color-ink-muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  max-width: 32rem;
+}
+
+.comparison__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--color-bg-dark);
+  touch-action: none;
+  user-select: none;
+  cursor: ew-resize;
+}
+
+.comparison__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.comparison__layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.comparison__layer--off img {
+  filter: brightness(0.38) saturate(0.75);
+}
+
+.comparison__layer--on {
+  clip-path: inset(0 calc(100% - var(--reveal, 52%)) 0 0);
+}
+
+.comparison__badge {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: #f4f2ec;
+  background: rgba(12, 13, 11, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.comparison__badge--on {
+  left: auto;
+  right: var(--space-4);
+}
+
+.comparison__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--reveal, 52%);
+  width: 1px;
+  background: rgba(242, 210, 124, 0.9);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.comparison__handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  background: rgba(16, 19, 15, 0.7);
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(4px);
+}
+
+.comparison__handle::before,
+.comparison__handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-top: 1px solid var(--color-accent);
+  border-right: 1px solid var(--color-accent);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.comparison__handle::before {
+  left: 0.65rem;
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+.comparison__handle::after {
+  right: 0.65rem;
+}
+
+.comparison__range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@media (max-width: 699px) {
+  .comparison__frame {
+    aspect-ratio: 4 / 5;
+  }
+}

@@ -1,0 +1,34 @@
+<section class="projects">
+  <app-container [wide]="true">
+    <header class="projects__header">
+      <h2 class="projects__title">Projeler</h2>
+      <a routerLink="/projects" class="projects__all">Tüm Projeleri Gör →</a>
+    </header>
+
+    <div class="projects__gallery">
+      @for (project of projects; track project.id; let i = $index) {
+        <article
+          class="projects__item"
+          [class.projects__item--1]="i === 0"
+          [class.projects__item--2]="i === 1"
+          [class.projects__item--3]="i === 2"
+        >
+          <div class="projects__media">
+            <img
+              [src]="project.image"
+              [alt]="project.title + ' — ' + project.location"
+              width="2000"
+              height="1400"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="projects__caption">
+            <h3 class="projects__name">{{ project.title }}</h3>
+            <p class="projects__location">{{ project.location }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </app-container>
+</section>

@@ -1,0 +1,35 @@
+<section class="products">
+  <app-container [wide]="true">
+    <header class="products__intro">
+      <h2 class="products__title">
+        @for (line of intro.headingLines; track line) {
+          <span>{{ line }}</span>
+        }
+      </h2>
+      <p class="products__lead">{{ intro.text }}</p>
+    </header>
+
+    <ul class="products__grid">
+      @for (product of products; track product.slug) {
+        <li>
+          <a [routerLink]="['/products', product.slug]" class="products__item">
+            <div class="products__media">
+              <img
+                [src]="product.image"
+                [alt]="product.name"
+                width="1000"
+                height="1000"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="products__meta">
+              <strong class="products__name">{{ product.name }}</strong>
+              <span class="products__specs">{{ product.specs }}</span>
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+  </app-container>
+</section>
