@@ -80,8 +80,13 @@ const IMG = {
   projectVilla: `${HOME_IMG}/project-villa.jpg`,
   projectLandscape: `${HOME_IMG}/project-landscape.jpg`,
   projectFacade: `${HOME_IMG}/category-path.jpg`,
-  comparisonLightOff: `${HOME_IMG}/comparison-light-off.jpg`,
-  comparisonLightOn: `${HOME_IMG}/comparison-light-on.jpg`,
+  /**
+   * Official slots (customer-supplied matched pair):
+   *   light-comparison-off.webp / light-comparison-on.webp
+   * Development fallback: identical temporary JPGs (no CSS OFF simulation).
+   */
+  comparisonLightOff: `${HOME_IMG}/light-comparison-off.jpg`,
+  comparisonLightOn: `${HOME_IMG}/light-comparison-on.jpg`,
 } as const;
 
 export const HOME_HERO: HomeHeroContent = {
@@ -195,8 +200,8 @@ export const HOME_COMPARISON: HomeComparisonContent = {
   lightOffImage: IMG.comparisonLightOff,
   lightOnImage: IMG.comparisonLightOn,
   imageAlt: 'Mimari mekân aydınlatma karşılaştırması',
-  beforeLabel: 'Kapalı',
-  afterLabel: 'Açık',
+  beforeLabel: 'IŞIK KAPALI',
+  afterLabel: 'IŞIK AÇIK',
 };
 
 export const HOME_TRUST = {

@@ -6,9 +6,12 @@ import {
   ViewChild,
   signal,
 } from '@angular/core';
-import { ContainerComponent } from '../../../../shared/components/container/container.component';
-import { HOME_COMPARISON } from '../../data/home.content';
+import { ContainerComponent } from '../container/container.component';
 
+/**
+ * Reusable LIGHT_OFF / LIGHT_ON comparison.
+ * Requires two distinct, aligned image sources — never fake OFF with CSS filters.
+ */
 @Component({
   selector: 'app-light-comparison',
   standalone: true,
@@ -17,20 +20,21 @@ import { HOME_COMPARISON } from '../../data/home.content';
   styleUrl: './light-comparison.component.scss',
 })
 export class LightComparisonComponent {
-  /** Lights-off base scene — replace with production LIGHT_OFF asset. */
-  @Input() lightOffImage = HOME_COMPARISON.lightOffImage;
+  /** Base layer — lights off photograph */
+  @Input({ required: true }) lightOffImage!: string;
 
-  /** Lights-on reveal scene — replace with aligned LIGHT_ON asset. */
-  @Input() lightOnImage = HOME_COMPARISON.lightOnImage;
+  /** Clipped reveal layer — lights on photograph (same crop/camera as OFF) */
+  @Input({ required: true }) lightOnImage!: string;
 
-  @Input() imageAlt = HOME_COMPARISON.imageAlt;
-  @Input() eyebrow = HOME_COMPARISON.eyebrow;
-  @Input() title = HOME_COMPARISON.title;
-  @Input() description = HOME_COMPARISON.description;
-  @Input() beforeLabel = HOME_COMPARISON.beforeLabel;
-  @Input() afterLabel = HOME_COMPARISON.afterLabel;
+  @Input() imageAlt = 'Aydınlatma karşılaştırması';
+  @Input() eyebrow = '';
+  @Input() title = '';
+  @Input() description = '';
+  @Input() beforeLabel = 'IŞIK KAPALI';
+  @Input() afterLabel = 'IŞIK AÇIK';
+  @Input() showHeader = true;
 
-  readonly position = signal(52);
+  readonly position = signal(50);
 
   @ViewChild('frame', { static: true })
   private frameRef!: ElementRef<HTMLElement>;

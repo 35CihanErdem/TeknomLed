@@ -1,10 +1,18 @@
 <section class="comparison">
   <app-container [wide]="true">
-    <header class="comparison__header">
-      <p class="label">{{ eyebrow }}</p>
-      <h2 class="comparison__title">{{ title }}</h2>
-      <p class="comparison__desc">{{ description }}</p>
-    </header>
+    @if (showHeader && (eyebrow || title || description)) {
+      <header class="comparison__header">
+        @if (eyebrow) {
+          <p class="label">{{ eyebrow }}</p>
+        }
+        @if (title) {
+          <h2 class="comparison__title">{{ title }}</h2>
+        }
+        @if (description) {
+          <p class="comparison__desc">{{ description }}</p>
+        }
+      </header>
+    }
 
     <div
       #frame

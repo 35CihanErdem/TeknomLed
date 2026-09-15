@@ -19,7 +19,16 @@
 
 <app-featured-products />
 
-<app-light-comparison />
+<app-light-comparison
+  [lightOffImage]="comparison.lightOffImage"
+  [lightOnImage]="comparison.lightOnImage"
+  [imageAlt]="comparison.imageAlt"
+  [eyebrow]="comparison.eyebrow"
+  [title]="comparison.title"
+  [description]="comparison.description"
+  [beforeLabel]="comparison.beforeLabel"
+  [afterLabel]="comparison.afterLabel"
+/>
 
 <app-project-showcase />
 

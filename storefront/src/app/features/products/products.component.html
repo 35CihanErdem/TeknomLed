@@ -1,0 +1,74 @@
+<section class="products-page">
+  <app-container [wide]="true">
+    <div class="products-page__intro">
+      <app-products-header />
+    </div>
+
+    <div class="products-page__cats">
+      <app-category-navigation
+        [categories]="categories"
+        [activeSlug]="filters().categorySlug"
+        (categoryChange)="onCategoryChange($event)"
+      />
+    </div>
+
+    <div class="products-page__tools">
+      <app-product-toolbar
+        [resultCount]="resultCount()"
+        [sort]="sort()"
+        [filterOpen]="filterOpen()"
+        (filterToggle)="toggleFilterPanel()"
+        (sortChange)="onSortChange($event)"
+      />
+
+      @if (activeChips().length > 0) {
+        <div class="active-filters" aria-label="Aktif filtreler">
+          <ul class="active-filters__list">
+            @for (chip of activeChips(); track chip.id) {
+              <li>
+                <button
+                  type="button"
+                  class="active-filters__chip"
+                  (click)="removeChip(chip)"
+                  [attr.aria-label]="chip.label + ' filtresini kaldır'"
+                >
+                  {{ chip.label }}
+                  <span aria-hidden="true">×</span>
+                </button>
+              </li>
+            }
+          </ul>
+          <button
+            type="button"
+            class="active-filters__clear"
+            (click)="clearFilters()"
+          >
+            Filtreleri Temizle
+          </button>
+        </div>
+      }
+    </div>
+  </app-container>
+
+  <div class="products-page__catalogue">
+    <app-product-grid
+      [products]="sortedProducts()"
+      (clearFilters)="clearFilters()"
+    />
+  </div>
+
+  <app-product-filter
+    [open]="filterOpen()"
+    [filters]="filters()"
+    [applicationAreas]="applicationAreas"
+    [kelvins]="kelvins"
+    [ipClasses]="ipClasses"
+    (closed)="closeFilterPanel()"
+    (applicationToggle)="toggleApplication($event)"
+    (kelvinToggle)="toggleKelvin($event)"
+    (powerToggle)="togglePower($event)"
+    (ipToggle)="toggleIp($event)"
+    (priceToggle)="togglePrice($event)"
+    (clearAll)="clearFilters()"
+  />
+</section>

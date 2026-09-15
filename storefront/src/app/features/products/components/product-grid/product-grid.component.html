@@ -1,0 +1,16 @@
+@if (products.length === 0) {
+  <div class="empty" role="status">
+    <p class="empty__title">Bu filtrelerle eşleşen ürün bulunamadı.</p>
+    <button type="button" class="empty__action" (click)="clearFilters.emit()">
+      Filtreleri Temizle
+    </button>
+  </div>
+} @else {
+  <ul class="grid">
+    @for (product of products; track product.id) {
+      <li>
+        <app-product-card [product]="product" />
+      </li>
+    }
+  </ul>
+}

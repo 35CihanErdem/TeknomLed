@@ -1,0 +1,41 @@
+.grid {
+  display: grid;
+  gap: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 2.5vw, 2.75rem);
+  grid-template-columns: 1fr;
+  padding-block: var(--space-7) var(--space-10);
+}
+
+.empty {
+  padding-block: var(--space-9);
+  text-align: left;
+}
+
+.empty__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+}
+
+.empty__action {
+  margin-top: var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-ink);
+  padding-bottom: 2px;
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    /* Editorial catalogue: exactly 3 columns on desktop */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

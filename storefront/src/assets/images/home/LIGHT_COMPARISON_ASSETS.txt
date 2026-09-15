@@ -1,0 +1,10 @@
+﻿OFFICIAL SLOTS (to be supplied by customer — matched camera/crop pair):
+  light-comparison-off.webp
+  light-comparison-on.webp
+
+DEVELOPMENT FALLBACK (current):
+  light-comparison-off.jpg
+  light-comparison-on.jpg
+  Identical temporary placeholders so the slider architecture works without
+  CSS brightness/filter faking a LIGHT_OFF state.
+  Replace both with genuine matched LIGHT_OFF / LIGHT_ON photography.

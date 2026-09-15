@@ -43,28 +43,25 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   pointer-events: none;
 }
 
-.comparison__layer--off img {
-  filter: brightness(0.38) saturate(0.75);
-}
-
+/* No brightness/filter simulation — OFF and ON are separate image sources */
 .comparison__layer--on {
-  clip-path: inset(0 calc(100% - var(--reveal, 52%)) 0 0);
+  clip-path: inset(0 calc(100% - var(--reveal, 50%)) 0 0);
 }
 
 .comparison__badge {
   position: absolute;
   top: var(--space-4);
   left: var(--space-4);
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #f4f2ec;
-  background: rgba(12, 13, 11, 0.55);
-  backdrop-filter: blur(6px);
+  color: rgba(244, 242, 236, 0.88);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }
 
 .comparison__badge--on {
@@ -76,9 +73,9 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: var(--reveal, 52%);
+  left: var(--reveal, 50%);
   width: 1px;
-  background: rgba(242, 210, 124, 0.9);
+  background: rgba(244, 242, 236, 0.75);
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -87,11 +84,11 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 1px solid var(--color-accent);
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(244, 242, 236, 0.9);
   border-radius: 50%;
-  background: rgba(16, 19, 15, 0.7);
+  background: rgba(16, 19, 15, 0.55);
   transform: translate(-50%, -50%);
   backdrop-filter: blur(4px);
 }
@@ -101,20 +98,20 @@
   content: '';
   position: absolute;
   top: 50%;
-  width: 0.4rem;
-  height: 0.4rem;
-  border-top: 1px solid var(--color-accent);
-  border-right: 1px solid var(--color-accent);
+  width: 0.35rem;
+  height: 0.35rem;
+  border-top: 1px solid #f4f2ec;
+  border-right: 1px solid #f4f2ec;
   transform: translateY(-50%) rotate(45deg);
 }
 
 .comparison__handle::before {
-  left: 0.65rem;
+  left: 0.5rem;
   transform: translateY(-50%) rotate(-135deg);
 }
 
 .comparison__handle::after {
-  right: 0.65rem;
+  right: 0.5rem;
 }
 
 .comparison__range {

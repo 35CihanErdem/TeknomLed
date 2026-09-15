@@ -1,0 +1,9 @@
+<header class="products-header">
+  <p class="products-header__eyebrow">{{ eyebrow }}</p>
+  <h1 class="products-header__title">
+    @for (line of headingLines; track line) {
+      <span>{{ line }}</span>
+    }
+  </h1>
+  <p class="products-header__lead">{{ supportingText }}</p>
+</header>

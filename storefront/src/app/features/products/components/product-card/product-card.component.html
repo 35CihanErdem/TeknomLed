@@ -1,0 +1,31 @@
+<a
+  class="card"
+  [routerLink]="['/products', product.slug]"
+  [attr.aria-label]="product.name + ' ürün detayı'"
+>
+  <!--
+    Consistent media frame (4:5 + object-fit: cover).
+    Official product photography can replace source URLs without layout changes.
+  -->
+  <div class="card__media">
+    <img
+      class="card__image"
+      [src]="primaryImage"
+      [alt]="imageAlt"
+      width="900"
+      height="1125"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="card__meta">
+    <div class="card__topline">
+      <p class="card__category">{{ product.category.name }}</p>
+      <span class="card__arrow" aria-hidden="true">→</span>
+    </div>
+    <h2 class="card__name">{{ product.name }}</h2>
+    <p class="card__summary">{{ summary }}</p>
+    <p class="card__price">{{ priceLabel }}</p>
+  </div>
+</a>

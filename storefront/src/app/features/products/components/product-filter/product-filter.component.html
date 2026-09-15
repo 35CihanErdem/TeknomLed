@@ -1,0 +1,118 @@
+@if (open) {
+  <div class="filter-backdrop" (click)="closed.emit()" aria-hidden="true"></div>
+}
+
+<aside
+  class="filter-panel"
+  [class.is-open]="open"
+  [attr.aria-hidden]="!open"
+  aria-label="Ürün filtreleri"
+>
+  <div class="filter-panel__head">
+    <h2 class="filter-panel__title">Filtreler</h2>
+    <button type="button" class="filter-panel__close" (click)="closed.emit()">
+      Kapat
+    </button>
+  </div>
+
+  <div class="filter-panel__body">
+    <section class="filter-group">
+      <h3 class="filter-group__title">Uygulama Alanı</h3>
+      <ul class="filter-group__list">
+        @for (area of applicationAreas; track area) {
+          <li>
+            <label class="filter-option">
+              <input
+                type="checkbox"
+                [checked]="isActive(filters.applicationAreas, area)"
+                (change)="applicationToggle.emit(area)"
+              />
+              <span>{{ area }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="filter-group">
+      <h3 class="filter-group__title">Kelvin</h3>
+      <ul class="filter-group__list">
+        @for (kelvin of kelvins; track kelvin) {
+          <li>
+            <label class="filter-option">
+              <input
+                type="checkbox"
+                [checked]="isActive(filters.kelvins, kelvin)"
+                (change)="kelvinToggle.emit(kelvin)"
+              />
+              <span>{{ kelvin }}K</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="filter-group">
+      <h3 class="filter-group__title">Güç</h3>
+      <ul class="filter-group__list">
+        @for (option of powerOptions; track option.id) {
+          <li>
+            <label class="filter-option">
+              <input
+                type="checkbox"
+                [checked]="isActive(filters.powerRanges, option.id)"
+                (change)="powerToggle.emit(option.id)"
+              />
+              <span>{{ option.label }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="filter-group">
+      <h3 class="filter-group__title">IP Sınıfı</h3>
+      <ul class="filter-group__list">
+        @for (ip of ipClasses; track ip) {
+          <li>
+            <label class="filter-option">
+              <input
+                type="checkbox"
+                [checked]="isActive(filters.ipClasses, ip)"
+                (change)="ipToggle.emit(ip)"
+              />
+              <span>{{ ip }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="filter-group">
+      <h3 class="filter-group__title">Fiyat</h3>
+      <ul class="filter-group__list">
+        @for (option of priceOptions; track option.id) {
+          <li>
+            <label class="filter-option">
+              <input
+                type="checkbox"
+                [checked]="isActive(filters.priceRanges, option.id)"
+                (change)="priceToggle.emit(option.id)"
+              />
+              <span>{{ option.label }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <div class="filter-panel__foot">
+    <button type="button" class="filter-panel__clear" (click)="clearAll.emit()">
+      Filtreleri Temizle
+    </button>
+    <button type="button" class="filter-panel__apply" (click)="closed.emit()">
+      Uygula
+    </button>
+  </div>
+</aside>

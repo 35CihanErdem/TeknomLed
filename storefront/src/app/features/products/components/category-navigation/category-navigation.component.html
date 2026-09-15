@@ -1,0 +1,23 @@
+<nav class="cat-nav" aria-label="Ürün kategorileri">
+  <div class="cat-nav__track">
+    <button
+      type="button"
+      class="cat-nav__item"
+      [class.is-active]="activeSlug === null"
+      (click)="select(null)"
+    >
+      Tümü
+    </button>
+
+    @for (category of categories; track category.id) {
+      <button
+        type="button"
+        class="cat-nav__item"
+        [class.is-active]="activeSlug === category.slug"
+        (click)="select(category.slug)"
+      >
+        {{ category.name }}
+      </button>
+    }
+  </div>
+</nav>

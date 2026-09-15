@@ -1,0 +1,115 @@
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(16, 19, 15, 0.35);
+}
+
+.filter-panel {
+  position: fixed;
+  z-index: 130;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(100%, 22rem);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  transform: translateX(-105%);
+  transition: transform var(--duration-base) var(--ease-out);
+  border-right: 1px solid var(--color-line);
+}
+
+.filter-panel.is-open {
+  transform: translateX(0);
+}
+
+.filter-panel__head,
+.filter-panel__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-5);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.filter-panel__foot {
+  margin-top: auto;
+  border-bottom: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.filter-panel__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+
+.filter-panel__close,
+.filter-panel__clear,
+.filter-panel__apply {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.filter-panel__close,
+.filter-panel__clear {
+  color: var(--color-ink-muted);
+}
+
+.filter-panel__apply {
+  padding: 0.7rem 1rem;
+  background: var(--color-accent);
+  color: #181a16;
+  border-radius: 2px;
+}
+
+.filter-panel__body {
+  overflow-y: auto;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.filter-group__title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-ink-subtle);
+}
+
+.filter-group__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.filter-option input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-bg-dark);
+}
+
+@media (max-width: 699px) {
+  .filter-panel {
+    width: 100%;
+    border-right: 0;
+  }
+}
