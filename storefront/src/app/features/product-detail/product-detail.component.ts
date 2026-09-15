@@ -8,6 +8,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { CartService } from '../../core/services/cart.service';
 import { ContainerComponent } from '../../shared/components/container/container.component';
 import { LightComparisonComponent } from '../../shared/components/light-comparison/light-comparison.component';
 import { ProductGalleryComponent } from './components/product-gallery/product-gallery.component';
@@ -48,6 +49,7 @@ import {
 export class ProductDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cart = inject(CartService);
 
   private readonly slug = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
@@ -66,6 +68,9 @@ export class ProductDetailComponent {
   });
 
   readonly galleryIndex = signal(0);
+  readonly addedFeedback = signal(false);
+
+  private feedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly galleryImages = computed(() => {
     const product = this.product();
@@ -102,10 +107,17 @@ export class ProductDetailComponent {
         const slug = params.get('slug') ?? '';
         const product = findProductBySlug(slug);
         this.galleryIndex.set(0);
+        this.addedFeedback.set(false);
         if (product) {
           this.selection.set(createInitialSelection(product.variants));
         }
       });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.feedbackTimer) {
+        clearTimeout(this.feedbackTimer);
+      }
+    });
   }
 
   onSelectionChange(partial: Partial<VariantSelection>): void {
@@ -121,8 +133,25 @@ export class ProductDetailComponent {
     this.galleryIndex.set(index);
   }
 
-  /** Phase 5 will implement cart. Isolated placeholder only. */
-  onAddToCart(): void {
-    // Intentionally no CartService / localStorage / counter mutation.
+  onAddToCart(quantity: number): void {
+    const product = this.product();
+    const variant = this.selectedVariant();
+    if (!product || !variant || variant.stock <= 0) {
+      return;
+    }
+
+    const added = this.cart.addItem(product.id, variant.id, quantity);
+    if (!added) {
+      return;
+    }
+
+    this.addedFeedback.set(true);
+    if (this.feedbackTimer) {
+      clearTimeout(this.feedbackTimer);
+    }
+    this.feedbackTimer = setTimeout(() => {
+      this.addedFeedback.set(false);
+      this.feedbackTimer = null;
+    }, 2200);
   }
 }

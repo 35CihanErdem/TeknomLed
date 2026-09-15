@@ -1,0 +1,65 @@
+<section class="cart-page">
+  <app-container [wide]="true">
+    <header class="cart-page__intro">
+      <p class="cart-page__eyebrow">Sepet</p>
+      <h1 class="cart-page__title">
+        <span>Seçtiğiniz</span>
+        <span>ürünler.</span>
+      </h1>
+      @if (!isEmpty()) {
+        <p class="cart-page__count">
+          {{ lineCount() }} ürün · {{ totalQuantity() }} adet
+        </p>
+      }
+    </header>
+
+    @if (isEmpty()) {
+      <div class="cart-page__empty">
+        <p class="cart-page__empty-title">Sepetiniz henüz boş.</p>
+        <p class="cart-page__empty-text">
+          Projeleriniz için doğru aydınlatma ürünlerini keşfedin.
+        </p>
+        <a routerLink="/products" class="cart-page__empty-cta">
+          Ürünleri Keşfet →
+        </a>
+      </div>
+    } @else {
+      <div class="cart-page__layout">
+        <div class="cart-page__items">
+          <div class="cart-page__items-head">
+            <button
+              type="button"
+              class="cart-page__clear"
+              (click)="clearCart()"
+            >
+              Sepeti Temizle
+            </button>
+          </div>
+
+          <ul class="cart-page__list">
+            @for (
+              item of items();
+              track item.productId + '-' + item.variantId
+            ) {
+              <li>
+                <app-cart-item
+                  [item]="item"
+                  (increment)="increment(item.productId, item.variantId)"
+                  (decrement)="decrement(item.productId, item.variantId)"
+                  (remove)="remove(item.productId, item.variantId)"
+                />
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="cart-page__summary">
+          <app-cart-summary
+            [subtotal]="subtotal()"
+            [isEmpty]="isEmpty()"
+          />
+        </div>
+      </div>
+    }
+  </app-container>
+</section>

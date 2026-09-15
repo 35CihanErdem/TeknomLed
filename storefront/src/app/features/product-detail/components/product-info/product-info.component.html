@@ -20,15 +20,40 @@
         {{ getStockLabel(variant.stock) }}
       </p>
 
+      <div class="info__qty" role="group" aria-label="Adet">
+        <button
+          type="button"
+          class="info__qty-btn"
+          aria-label="Adedi azalt"
+          [disabled]="quantity <= 1 || outOfStock"
+          (click)="decreaseQuantity()"
+        >
+          −
+        </button>
+        <span class="info__qty-value" aria-live="polite">{{ quantity }}</span>
+        <button
+          type="button"
+          class="info__qty-btn"
+          aria-label="Adedi artır"
+          [disabled]="quantity >= maxQuantity || outOfStock"
+          (click)="increaseQuantity()"
+        >
+          +
+        </button>
+      </div>
+
       <button
         type="button"
         class="info__cta"
         [disabled]="outOfStock"
-        (click)="addToCart.emit()"
+        (click)="submitAddToCart()"
       >
         Sepete Ekle
       </button>
-      <p class="info__cta-note">Sepet işlevi sonraki aşamada eklenecek.</p>
+
+      @if (addedFeedback) {
+        <p class="info__feedback" role="status">Sepete eklendi</p>
+      }
     </div>
   }
 </div>

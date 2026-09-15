@@ -1,0 +1,29 @@
+<aside class="cart-summary" aria-label="Sipariş özeti">
+  <h2 class="cart-summary__title">Sipariş Özeti</h2>
+
+  <dl class="cart-summary__rows">
+    <div class="cart-summary__row">
+      <dt>Ara Toplam</dt>
+      <dd>{{ formatPrice(subtotal()) }}</dd>
+    </div>
+    <div class="cart-summary__row cart-summary__row--muted">
+      <dt>Kargo</dt>
+      <dd>Sonraki adımda hesaplanacak</dd>
+    </div>
+  </dl>
+
+  <div class="cart-summary__total">
+    <span>Toplam</span>
+    <strong>{{ formatPrice(subtotal()) }}</strong>
+  </div>
+
+  @if (!isEmpty()) {
+    <a routerLink="/checkout" class="cart-summary__cta">
+      Devam Et →
+    </a>
+  } @else {
+    <button type="button" class="cart-summary__cta" disabled>
+      Devam Et →
+    </button>
+  }
+</aside>

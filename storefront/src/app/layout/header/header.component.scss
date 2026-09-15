@@ -85,6 +85,16 @@
   display: none;
 }
 
+.header__cart {
+  display: none;
+  white-space: nowrap;
+}
+
+.header__cart-count {
+  margin-left: 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .header__menu-toggle {
   width: 2.5rem;
   height: 2.5rem;
@@ -194,6 +204,10 @@
   }
 
   .header__utility {
+    display: inline;
+  }
+
+  .header__cart {
     display: inline;
   }
 

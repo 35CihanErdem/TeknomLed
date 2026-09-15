@@ -1,0 +1,75 @@
+<article class="cart-item">
+  <a
+    class="cart-item__media"
+    [routerLink]="['/products', item().productSlug]"
+  >
+    <img
+      [src]="item().imageUrl"
+      [alt]="item().imageAlt"
+      loading="lazy"
+      width="320"
+      height="320"
+    />
+  </a>
+
+  <div class="cart-item__body">
+    <div class="cart-item__copy">
+      <p class="cart-item__category">{{ item().categoryName }}</p>
+      <h2 class="cart-item__name">
+        <a [routerLink]="['/products', item().productSlug]">
+          {{ item().productName }}
+        </a>
+      </h2>
+
+      @if (item().variantSummary) {
+        <p class="cart-item__variant">{{ item().variantSummary }}</p>
+      }
+
+      @if (item().sku) {
+        <p class="cart-item__sku">SKU {{ item().sku }}</p>
+      }
+    </div>
+
+    <div class="cart-item__controls">
+      <div class="cart-item__qty" role="group" aria-label="Adet">
+        <button
+          type="button"
+          class="cart-item__qty-btn"
+          aria-label="Adedi azalt"
+          [disabled]="item().quantity <= 1"
+          (click)="decrement.emit()"
+        >
+          −
+        </button>
+        <span class="cart-item__qty-value" aria-live="polite">
+          {{ item().quantity }}
+        </span>
+        <button
+          type="button"
+          class="cart-item__qty-btn"
+          aria-label="Adedi artır"
+          [disabled]="item().quantity >= item().stock"
+          (click)="increment.emit()"
+        >
+          +
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="cart-item__remove"
+        [attr.aria-label]="item().productName + ' ürününü sepetten kaldır'"
+        (click)="remove.emit()"
+      >
+        Kaldır
+      </button>
+    </div>
+  </div>
+
+  <div class="cart-item__pricing">
+    <p class="cart-item__line-total">{{ formatPrice(item().lineTotal) }}</p>
+    <p class="cart-item__unit">
+      {{ formatPrice(item().unitPrice) }} / adet
+    </p>
+  </div>
+</article>

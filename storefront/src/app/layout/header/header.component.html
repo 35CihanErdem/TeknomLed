@@ -28,6 +28,25 @@
           </a>
         }
 
+        <a
+          routerLink="/cart"
+          routerLinkActive="is-active"
+          class="header__utility header__cart"
+          [attr.aria-label]="
+            cartQuantity() > 0
+              ? 'Sepet, ' + cartQuantity() + ' ürün'
+              : 'Sepet'
+          "
+          (click)="closeMenu()"
+        >
+          <span aria-hidden="true">Sepet</span>
+          @if (cartQuantity() > 0) {
+            <span class="header__cart-count" aria-hidden="true">
+              ({{ cartQuantity() }})
+            </span>
+          }
+        </a>
+
         <button
           type="button"
           class="header__menu-toggle"
@@ -73,6 +92,23 @@
             {{ item.label }}
           </a>
         }
+
+        <a
+          routerLink="/cart"
+          routerLinkActive="is-active"
+          class="header__drawer-link header__drawer-link--utility"
+          [attr.aria-label]="
+            cartQuantity() > 0
+              ? 'Sepet, ' + cartQuantity() + ' ürün'
+              : 'Sepet'
+          "
+          (click)="closeMenu()"
+        >
+          Sepet
+          @if (cartQuantity() > 0) {
+            <span> ({{ cartQuantity() }})</span>
+          }
+        </a>
       </nav>
     </app-container>
   </div>

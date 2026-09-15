@@ -2,6 +2,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { CartService } from '../../core/services/cart.service';
 import { ContainerComponent } from '../../shared/components/container/container.component';
 
 interface NavItem {
@@ -22,9 +23,11 @@ interface NavItem {
 export class HeaderComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cart = inject(CartService);
 
   readonly menuOpen = signal(false);
   readonly overlay = signal(this.isHomeUrl(this.router.url));
+  readonly cartQuantity = this.cart.totalQuantity;
 
   readonly primaryNav: NavItem[] = [
     { label: 'Ürünler', path: '/products' },
@@ -37,7 +40,6 @@ export class HeaderComponent {
   readonly utilityNav: NavItem[] = [
     { label: 'Arama', path: '/search' },
     { label: 'Hesap', path: '/account' },
-    { label: 'Sepet', path: '/cart' },
   ];
 
   constructor() {
