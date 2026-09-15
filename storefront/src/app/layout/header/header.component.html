@@ -1,0 +1,79 @@
+<header class="header">
+  <app-container [wide]="true">
+    <div class="header__bar">
+      <a routerLink="/" class="header__brand" (click)="closeMenu()">
+        TeknomLed
+      </a>
+
+      <nav class="header__nav" aria-label="Ana menü">
+        @for (item of primaryNav; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            class="header__link"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+
+      <div class="header__actions">
+        @for (item of utilityNav; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            class="header__utility"
+          >
+            {{ item.label }}
+          </a>
+        }
+
+        <button
+          type="button"
+          class="header__menu-toggle"
+          [attr.aria-expanded]="menuOpen()"
+          aria-controls="mobile-nav"
+          (click)="toggleMenu()"
+        >
+          <span class="visually-hidden">Menüyü aç</span>
+          <span class="header__menu-icon" [class.is-open]="menuOpen()" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </app-container>
+
+  <div
+    id="mobile-nav"
+    class="header__drawer"
+    [class.is-open]="menuOpen()"
+    [attr.aria-hidden]="!menuOpen()"
+  >
+    <app-container>
+      <nav class="header__drawer-nav" aria-label="Mobil menü">
+        @for (item of primaryNav; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            class="header__drawer-link"
+            (click)="closeMenu()"
+          >
+            {{ item.label }}
+          </a>
+        }
+
+        <div class="header__drawer-divider"></div>
+
+        @for (item of utilityNav; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            class="header__drawer-link header__drawer-link--utility"
+            (click)="closeMenu()"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+    </app-container>
+  </div>
+</header>

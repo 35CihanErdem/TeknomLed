@@ -1,0 +1,32 @@
+<footer class="footer">
+  <app-container [wide]="true">
+    <div class="footer__grid">
+      <div class="footer__brand-block">
+        <p class="footer__brand">TeknomLed</p>
+        <p class="footer__tagline">
+          Mimari aydınlatma için sade, güçlü ve kalıcı çözümler.
+        </p>
+      </div>
+
+      <nav class="footer__nav" aria-label="Alt menü">
+        <div class="footer__col">
+          <p class="label">Keşfet</p>
+          <a routerLink="/products">Ürünler</a>
+          <a routerLink="/projects">Projeler</a>
+          <a routerLink="/about">Hakkımızda</a>
+        </div>
+
+        <div class="footer__col">
+          <p class="label">Destek</p>
+          <a routerLink="/contact">İletişim</a>
+          <a routerLink="/account">Hesabım</a>
+          <a routerLink="/account/orders">Siparişlerim</a>
+        </div>
+      </nav>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {{ year }} TeknomLed</p>
+    </div>
+  </app-container>
+</footer>

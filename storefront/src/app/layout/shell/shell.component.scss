@@ -1,0 +1,9 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell__main {
+  flex: 1;
+}
