@@ -1,0 +1,37 @@
+@use '../../styles/checkout-form';
+
+.ck-section__head {
+  margin-bottom: 1.35rem;
+}
+
+.ck-section__title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-subtle);
+}
+
+.ck-invoice__type {
+  margin-top: 1.5rem;
+}
+
+.ck-invoice__type-label {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.ck-invoice__fields {
+  margin-top: 1.5rem;
+}
+
+.ck-invoice__address {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-line);
+}

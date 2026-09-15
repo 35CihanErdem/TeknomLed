@@ -1,0 +1,41 @@
+@use '../../styles/checkout-form';
+
+.ck-section__head {
+  margin-bottom: 1.35rem;
+}
+
+.ck-section__title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-subtle);
+}
+
+.ck-payment__method {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.95rem 0;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.ck-payment__method.is-disabled {
+  opacity: 0.72;
+}
+
+.ck-payment__method-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ck-payment__method-state {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-subtle);
+}

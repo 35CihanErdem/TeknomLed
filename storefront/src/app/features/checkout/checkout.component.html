@@ -1,0 +1,82 @@
+<section class="checkout-page">
+  <app-container [wide]="true">
+    <header class="checkout-page__intro">
+      <p class="checkout-page__eyebrow">Sipariş</p>
+      <h1 class="checkout-page__title">
+        <span>Siparişinizi</span>
+        <span>tamamlayın.</span>
+      </h1>
+    </header>
+
+    @if (isEmpty()) {
+      <div class="checkout-page__empty">
+        <p class="checkout-page__empty-title">Sepetiniz boş.</p>
+        <p class="checkout-page__empty-text">
+          Checkout’a devam etmek için önce sepete ürün ekleyin.
+        </p>
+        <a routerLink="/products" class="checkout-page__empty-cta">
+          Ürünleri Keşfet →
+        </a>
+      </div>
+    } @else {
+      <div class="checkout-page__layout">
+        <form
+          class="checkout-page__form"
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          novalidate
+        >
+          <div class="checkout-page__block" id="checkout-contact">
+            <app-checkout-contact
+              [form]="contactGroup"
+              [submitted]="submitted()"
+            />
+          </div>
+
+          <div class="checkout-page__block" id="checkout-shipping-address">
+            <app-checkout-address
+              [form]="shippingAddressGroup"
+              [submitted]="submitted()"
+              title="Teslimat Adresi"
+              idPrefix="ship"
+            />
+          </div>
+
+          <div class="checkout-page__block" id="checkout-invoice">
+            <app-checkout-invoice
+              [form]="invoiceGroup"
+              [submitted]="submitted()"
+            />
+          </div>
+
+          <div class="checkout-page__block" id="checkout-shipping">
+            <app-checkout-shipping />
+          </div>
+
+          <div class="checkout-page__block" id="checkout-payment">
+            <app-checkout-payment />
+          </div>
+
+          <div class="checkout-page__actions">
+            <button type="submit" class="checkout-page__submit">
+              Siparişi Tamamla
+            </button>
+
+            @if (integrationNotice()) {
+              <p class="checkout-page__notice" role="status">
+                Sipariş altyapısı sonraki aşamada bağlanacaktır.
+              </p>
+            }
+          </div>
+        </form>
+
+        <div class="checkout-page__summary">
+          <app-checkout-summary
+            [items]="items()"
+            [subtotal]="subtotal()"
+          />
+        </div>
+      </div>
+    }
+  </app-container>
+</section>

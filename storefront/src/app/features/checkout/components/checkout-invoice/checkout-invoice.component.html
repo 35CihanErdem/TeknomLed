@@ -1,0 +1,137 @@
+<section class="ck-section" [formGroup]="form">
+  <header class="ck-section__head">
+    <h2 class="ck-section__title">Fatura Bilgileri</h2>
+  </header>
+
+  <label class="ck-check">
+    <input type="checkbox" formControlName="sameAsShipping" />
+    <span>Teslimat adresim fatura adresimle aynı</span>
+  </label>
+
+  <div class="ck-invoice__type" role="group" aria-label="Fatura tipi">
+    <p class="ck-invoice__type-label">Fatura tipi</p>
+    <div class="ck-segment">
+      <button
+        type="button"
+        class="ck-segment__btn"
+        [class.is-active]="type === 'individual'"
+        (click)="setType('individual')"
+      >
+        Bireysel
+      </button>
+      <button
+        type="button"
+        class="ck-segment__btn"
+        [class.is-active]="type === 'corporate'"
+        (click)="setType('corporate')"
+      >
+        Kurumsal
+      </button>
+    </div>
+  </div>
+
+  @if (type === 'individual') {
+    <div class="ck-grid ck-grid--2 ck-invoice__fields">
+      <div class="ck-field">
+        <label class="ck-field__label" for="invoice-firstName">Ad *</label>
+        <input
+          id="invoice-firstName"
+          class="ck-field__control"
+          type="text"
+          formControlName="firstName"
+          [class.is-invalid]="!!error('firstName')"
+        />
+        @if (error('firstName'); as message) {
+          <p class="ck-field__error">{{ message }}</p>
+        }
+      </div>
+
+      <div class="ck-field">
+        <label class="ck-field__label" for="invoice-lastName">Soyad *</label>
+        <input
+          id="invoice-lastName"
+          class="ck-field__control"
+          type="text"
+          formControlName="lastName"
+          [class.is-invalid]="!!error('lastName')"
+        />
+        @if (error('lastName'); as message) {
+          <p class="ck-field__error">{{ message }}</p>
+        }
+      </div>
+
+      <div class="ck-field ck-grid__full">
+        <label class="ck-field__label" for="invoice-identity">T.C. Kimlik No *</label>
+        <input
+          id="invoice-identity"
+          class="ck-field__control"
+          type="text"
+          formControlName="identityNumber"
+          inputmode="numeric"
+          maxlength="11"
+          [class.is-invalid]="!!error('identityNumber')"
+        />
+        @if (error('identityNumber'); as message) {
+          <p class="ck-field__error">{{ message }}</p>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="ck-grid ck-grid--2 ck-invoice__fields">
+      <div class="ck-field ck-grid__full">
+        <label class="ck-field__label" for="invoice-companyName">Firma Ünvanı *</label>
+        <input
+          id="invoice-companyName"
+          class="ck-field__control"
+          type="text"
+          formControlName="companyName"
+          [class.is-invalid]="!!error('companyName')"
+        />
+        @if (error('companyName'); as message) {
+          <p class="ck-field__error">{{ message }}</p>
+        }
+      </div>
+
+      <div class="ck-field">
+        <label class="ck-field__label" for="invoice-taxOffice">Vergi Dairesi *</label>
+        <input
+          id="invoice-taxOffice"
+          class="ck-field__control"
+          type="text"
+          formControlName="taxOffice"
+          [class.is-invalid]="!!error('taxOffice')"
+        />
+        @if (error('taxOffice'); as message) {
+          <p class="ck-field__error">{{ message }}</p>
+        }
+      </div>
+
+      <div class="ck-field">
+        <label class="ck-field__label" for="invoice-taxNumber">Vergi Numarası *</label>
+        <input
+          id="invoice-taxNumber"
+          class="ck-field__control"
+          type="text"
+          formControlName="taxNumber"
+          inputmode="numeric"
+          maxlength="10"
+          [class.is-invalid]="!!error('taxNumber')"
+        />
+        @if (error('taxNumber'); as message) {
+          <p class="ck-field__error">{{ message }}</p>
+        }
+      </div>
+    </div>
+  }
+
+  @if (!sameAsShipping) {
+    <div class="ck-invoice__address">
+      <app-checkout-address
+        [form]="addressGroup"
+        [submitted]="submitted"
+        title="Fatura Adresi"
+        idPrefix="invoice-addr"
+      />
+    </div>
+  }
+</section>

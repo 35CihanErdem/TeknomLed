@@ -1,0 +1,50 @@
+<aside class="checkout-summary" aria-label="Sipariş özeti">
+  <div class="checkout-summary__head">
+    <h2 class="checkout-summary__title">Sipariş Özeti</h2>
+    <a routerLink="/cart" class="checkout-summary__edit">Sepeti Düzenle</a>
+  </div>
+
+  <ul class="checkout-summary__list">
+    @for (item of items(); track item.productId + '-' + item.variantId) {
+      <li class="checkout-summary__line">
+        <div class="checkout-summary__media">
+          <img
+            [src]="item.imageUrl"
+            [alt]="item.imageAlt"
+            loading="lazy"
+            width="80"
+            height="80"
+          />
+        </div>
+        <div class="checkout-summary__copy">
+          <p class="checkout-summary__name">{{ item.productName }}</p>
+          @if (item.variantSummary) {
+            <p class="checkout-summary__variant">{{ item.variantSummary }}</p>
+          }
+          <p class="checkout-summary__qty">Adet: {{ item.quantity }}</p>
+        </div>
+        <p class="checkout-summary__price">{{ formatPrice(item.lineTotal) }}</p>
+      </li>
+    }
+  </ul>
+
+  <dl class="checkout-summary__rows">
+    <div class="checkout-summary__row">
+      <dt>Ara Toplam</dt>
+      <dd>{{ formatPrice(subtotal()) }}</dd>
+    </div>
+    <div class="checkout-summary__row checkout-summary__row--muted">
+      <dt>Kargo</dt>
+      <dd>Hesaplanacak</dd>
+    </div>
+  </dl>
+
+  <div class="checkout-summary__total">
+    <span>Toplam</span>
+    <strong>{{ formatPrice(subtotal()) }}</strong>
+  </div>
+
+  <p class="checkout-summary__note">
+    Kargo ücreti henüz dahil değildir.
+  </p>
+</aside>

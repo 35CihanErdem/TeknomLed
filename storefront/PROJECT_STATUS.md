@@ -18,20 +18,33 @@ Status: Complete
 ## Phase 5 — Cart Experience
 Status: Complete
 
-Current Phase: PHASE 5 — CART EXPERIENCE
+## Phase 6 — Checkout Foundation
+Status: Complete
+
+Current Phase: PHASE 6 — CHECKOUT FOUNDATION
 
 Implemented:
-- Client-side cart identity: `productId + variantId`
-- `CartService` (signals) with derived detailed items, totals, quantity ops
-- Persistence via `teknomled.storefront.cart.v1` with safe hydrate/sanitize
-- Product Detail: quantity selector, real Add to Cart, inline “Sepete eklendi”
-- Header cart count = total quantity → `/cart`
-- `/cart` page: lines, qty/remove/clear, order summary, empty state
-- Continue CTA navigates to `/checkout` placeholder only
+- Guest checkout on `/checkout` (no auth required)
+- Angular Reactive Forms: contact, shipping address, invoice, shipment, payment
+- Turkish-friendly required phone + required email
+- Invoice: same-as-shipping toggle, bireysel / kurumsal fields, optional separate address
+- Shipping placeholder (fee calculated later — not invented)
+- Payment integration-ready placeholder (no card fields, no fake payment)
+- Order summary derives live from CartService; total = subtotal
+- Checkout draft persistence: `teknomled.storefront.checkout.v1` (debounced)
+- Valid submit validates only and shows integration message — no order creation, cart unchanged
+- Empty cart → intentional empty checkout state → `/products`
 
-Checkout, backend stock validation and server-side cart are not implemented yet.
+Architecture notes:
+- Frontend cart/checkout prices are display values only; backend will be the
+  source of truth during order creation.
+- Frontend will NEVER decide that an order is paid. Future: Angular → ASP.NET Core
+  → payment provider → webhook verification → PAID.
+- Future order lifecycle (not implemented): PENDING → PAYMENT_PENDING → PAID →
+  PREPARING → IN_PRODUCTION → READY_TO_SHIP → SHIPPED → DELIVERED
+  (exceptional: CANCELLED, REFUNDED)
 
-Note: Official customer product catalogue and final photography are still pending.
+Official customer product catalogue and final photography are still pending.
 
-## Phase 6+
+## Phase 7+
 Not started

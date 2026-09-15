@@ -1,0 +1,126 @@
+<section class="ck-section" [formGroup]="form">
+  <header class="ck-section__head">
+    <h2 class="ck-section__title">{{ title }}</h2>
+  </header>
+
+  <div class="ck-grid ck-grid--2">
+    <div class="ck-field">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-firstName'">Ad *</label>
+      <input
+        [id]="idPrefix + '-firstName'"
+        class="ck-field__control"
+        type="text"
+        formControlName="firstName"
+        autocomplete="given-name"
+        [class.is-invalid]="!!error('firstName')"
+      />
+      @if (error('firstName'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+
+    <div class="ck-field">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-lastName'">Soyad *</label>
+      <input
+        [id]="idPrefix + '-lastName'"
+        class="ck-field__control"
+        type="text"
+        formControlName="lastName"
+        autocomplete="family-name"
+        [class.is-invalid]="!!error('lastName')"
+      />
+      @if (error('lastName'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+
+    <div class="ck-field ck-grid__full">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-company'">
+        Firma adı
+        <span class="ck-field__optional">(opsiyonel)</span>
+      </label>
+      <input
+        [id]="idPrefix + '-company'"
+        class="ck-field__control"
+        type="text"
+        formControlName="company"
+        autocomplete="organization"
+      />
+    </div>
+
+    <div class="ck-field">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-country'">Ülke *</label>
+      <input
+        [id]="idPrefix + '-country'"
+        class="ck-field__control"
+        type="text"
+        formControlName="country"
+        autocomplete="country-name"
+        [class.is-invalid]="!!error('country')"
+      />
+      @if (error('country'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+
+    <div class="ck-field">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-city'">İl *</label>
+      <input
+        [id]="idPrefix + '-city'"
+        class="ck-field__control"
+        type="text"
+        formControlName="city"
+        autocomplete="address-level1"
+        [class.is-invalid]="!!error('city')"
+      />
+      @if (error('city'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+
+    <div class="ck-field">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-district'">İlçe *</label>
+      <input
+        [id]="idPrefix + '-district'"
+        class="ck-field__control"
+        type="text"
+        formControlName="district"
+        autocomplete="address-level2"
+        [class.is-invalid]="!!error('district')"
+      />
+      @if (error('district'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+
+    <div class="ck-field">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-postalCode'">
+        Posta Kodu
+        <span class="ck-field__optional">(opsiyonel)</span>
+      </label>
+      <input
+        [id]="idPrefix + '-postalCode'"
+        class="ck-field__control"
+        type="text"
+        formControlName="postalCode"
+        autocomplete="postal-code"
+        inputmode="numeric"
+      />
+    </div>
+
+    <div class="ck-field ck-grid__full">
+      <label class="ck-field__label" [attr.for]="idPrefix + '-addressLine'">Adres *</label>
+      <textarea
+        [id]="idPrefix + '-addressLine'"
+        class="ck-field__control ck-field__control--textarea"
+        formControlName="addressLine"
+        autocomplete="street-address"
+        rows="3"
+        [class.is-invalid]="!!error('addressLine')"
+      ></textarea>
+      @if (error('addressLine'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+  </div>
+</section>

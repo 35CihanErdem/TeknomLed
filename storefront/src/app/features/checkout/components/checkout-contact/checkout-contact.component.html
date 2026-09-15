@@ -1,0 +1,40 @@
+<section class="ck-section" [formGroup]="form">
+  <header class="ck-section__head">
+    <h2 class="ck-section__title">İletişim</h2>
+  </header>
+
+  <div class="ck-grid ck-grid--2">
+    <div class="ck-field">
+      <label class="ck-field__label" for="checkout-email">E-posta *</label>
+      <input
+        id="checkout-email"
+        class="ck-field__control"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [class.is-invalid]="!!error('email')"
+      />
+      @if (error('email'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+
+    <div class="ck-field">
+      <label class="ck-field__label" for="checkout-phone">Telefon *</label>
+      <input
+        id="checkout-phone"
+        class="ck-field__control"
+        type="tel"
+        formControlName="phone"
+        autocomplete="tel"
+        placeholder="+90 5XX XXX XX XX"
+        inputmode="tel"
+        [class.is-invalid]="!!error('phone')"
+        (blur)="onPhoneBlur()"
+      />
+      @if (error('phone'); as message) {
+        <p class="ck-field__error">{{ message }}</p>
+      }
+    </div>
+  </div>
+</section>
