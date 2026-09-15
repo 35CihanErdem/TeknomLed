@@ -1,0 +1,12 @@
+@if (items.length > 0) {
+  <section class="tech-summary" aria-label="Teknik özet">
+    <ul class="tech-summary__list">
+      @for (item of items; track item.label) {
+        <li class="tech-summary__item">
+          <p class="tech-summary__value">{{ item.value }}</p>
+          <p class="tech-summary__label">{{ item.label }}</p>
+        </li>
+      }
+    </ul>
+  </section>
+}

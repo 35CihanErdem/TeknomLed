@@ -1,0 +1,43 @@
+<div class="gallery">
+  <div class="gallery__main">
+    @if (active; as image) {
+      <img
+        [src]="image.url"
+        [alt]="image.alt"
+        width="1400"
+        height="1600"
+        decoding="async"
+        fetchpriority="high"
+      />
+    } @else {
+      <div class="gallery__placeholder" role="img" aria-label="Görsel yakında">
+        Görsel yakında
+      </div>
+    }
+  </div>
+
+  @if (images.length > 1) {
+    <div class="gallery__thumbs" role="list">
+      @for (image of images; track image.url; let i = $index) {
+        <button
+          type="button"
+          class="gallery__thumb"
+          role="listitem"
+          [class.is-active]="i === activeIndex"
+          [attr.aria-label]="'Görsel ' + (i + 1) + ': ' + image.alt"
+          [attr.aria-current]="i === activeIndex ? 'true' : null"
+          (click)="select(i)"
+        >
+          <img
+            [src]="image.url"
+            [alt]="''"
+            width="160"
+            height="180"
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
+      }
+    </div>
+  }
+</div>

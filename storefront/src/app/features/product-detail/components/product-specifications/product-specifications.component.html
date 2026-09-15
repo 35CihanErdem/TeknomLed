@@ -1,0 +1,13 @@
+@if (rows.length > 0) {
+  <section class="specs">
+    <h2 class="specs__title">Teknik özellikler</h2>
+    <dl class="specs__list">
+      @for (row of rows; track row.label) {
+        <div class="specs__row">
+          <dt>{{ row.label }}</dt>
+          <dd>{{ row.value }}</dd>
+        </div>
+      }
+    </dl>
+  </section>
+}

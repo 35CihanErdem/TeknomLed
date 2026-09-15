@@ -6,6 +6,7 @@ import {
   ViewChild,
   signal,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ContainerComponent } from '../container/container.component';
 
 /**
@@ -15,7 +16,7 @@ import { ContainerComponent } from '../container/container.component';
 @Component({
   selector: 'app-light-comparison',
   standalone: true,
-  imports: [ContainerComponent],
+  imports: [ContainerComponent, NgTemplateOutlet],
   templateUrl: './light-comparison.component.html',
   styleUrl: './light-comparison.component.scss',
 })
@@ -33,11 +34,13 @@ export class LightComparisonComponent {
   @Input() beforeLabel = 'IŞIK KAPALI';
   @Input() afterLabel = 'IŞIK AÇIK';
   @Input() showHeader = true;
+  /** When true, render only the comparison frame (Product Detail embedding). */
+  @Input() embedded = false;
 
   readonly position = signal(50);
 
-  @ViewChild('frame', { static: true })
-  private frameRef!: ElementRef<HTMLElement>;
+  @ViewChild('frame')
+  private frameRef?: ElementRef<HTMLElement>;
 
   private dragging = false;
 
@@ -72,7 +75,11 @@ export class LightComparisonComponent {
   }
 
   private updateFromClientX(clientX: number): void {
-    const rect = this.frameRef.nativeElement.getBoundingClientRect();
+    const frame = this.frameRef?.nativeElement;
+    if (!frame) {
+      return;
+    }
+    const rect = frame.getBoundingClientRect();
     const ratio = (clientX - rect.left) / rect.width;
     this.position.set(Math.round(Math.min(100, Math.max(0, ratio * 100))));
   }

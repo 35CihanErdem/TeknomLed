@@ -1,0 +1,98 @@
+.info__category {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-subtle);
+}
+
+.info__name {
+  margin: 0.85rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 3vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.info__desc {
+  margin: 1.1rem 0 0;
+  max-width: 28rem;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--color-ink-muted);
+}
+
+app-variant-selector {
+  display: block;
+  margin-top: 1.75rem;
+}
+
+.info__purchase {
+  margin-top: 1.85rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.info__price {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.info__stock {
+  margin: 0.55rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.info__stock.is-limited {
+  color: #8a6a2f;
+}
+
+.info__stock.is-empty {
+  color: #8a4a4a;
+}
+
+.info__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.1rem;
+  margin-top: 1.25rem;
+  padding-inline: 1.6rem;
+  background: var(--color-accent);
+  color: #181a16;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.info__cta:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.info__cta:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.info__cta-note {
+  margin: 0.65rem 0 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-subtle);
+}
+
+@media (min-width: 960px) {
+  :host {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-height) + 1.25rem);
+  }
+}

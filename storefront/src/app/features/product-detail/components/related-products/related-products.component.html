@@ -1,0 +1,14 @@
+@if (products.length > 0) {
+  <section class="related">
+    <app-container [wide]="true">
+      <h2 class="related__title">Benzer ürünler</h2>
+      <ul class="related__grid">
+        @for (product of products; track product.id) {
+          <li>
+            <app-product-card [product]="product" />
+          </li>
+        }
+      </ul>
+    </app-container>
+  </section>
+}

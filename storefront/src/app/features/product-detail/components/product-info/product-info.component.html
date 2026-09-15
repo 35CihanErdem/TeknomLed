@@ -1,0 +1,34 @@
+<div class="info">
+  <p class="info__category">{{ product.category.name }}</p>
+  <h1 class="info__name">{{ product.name }}</h1>
+  <p class="info__desc">{{ product.shortDescription }}</p>
+
+  <app-variant-selector
+    [variants]="product.variants"
+    [selection]="selection"
+    (selectionChange)="selectionChange.emit($event)"
+  />
+
+  @if (selectedVariant; as variant) {
+    <div class="info__purchase">
+      <p class="info__price">{{ formatPrice(variant.price) }}</p>
+      <p
+        class="info__stock"
+        [class.is-limited]="variant.stock > 0 && variant.stock <= 8"
+        [class.is-empty]="variant.stock <= 0"
+      >
+        {{ getStockLabel(variant.stock) }}
+      </p>
+
+      <button
+        type="button"
+        class="info__cta"
+        [disabled]="outOfStock"
+        (click)="addToCart.emit()"
+      >
+        Sepete Ekle
+      </button>
+      <p class="info__cta-note">Sepet işlevi sonraki aşamada eklenecek.</p>
+    </div>
+  }
+</div>

@@ -1,0 +1,39 @@
+@if (images.length > 0) {
+  <section class="application">
+    <header class="application__header">
+      <h2 class="application__title">Mekânda nasıl görünür?</h2>
+    </header>
+
+    <div class="application__grid">
+      @if (primary; as image) {
+        <figure class="application__primary">
+          <img
+            [src]="image.url"
+            [alt]="image.alt"
+            width="1600"
+            height="1100"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      }
+
+      @if (secondary.length > 0) {
+        <div class="application__side">
+          @for (image of secondary; track image.url) {
+            <figure>
+              <img
+                [src]="image.url"
+                [alt]="image.alt"
+                width="900"
+                height="700"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          }
+        </div>
+      }
+    </div>
+  </section>
+}

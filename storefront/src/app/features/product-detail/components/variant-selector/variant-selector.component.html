@@ -1,0 +1,63 @@
+@if (showKelvin || showWatt || showColor) {
+  <div class="variants">
+    @if (showKelvin) {
+      <fieldset class="variants__group">
+        <legend class="variants__legend">Renk Sıcaklığı</legend>
+        <div class="variants__options">
+          @for (kelvin of kelvins; track kelvin) {
+            <button
+              type="button"
+              class="variants__option"
+              [class.is-active]="selection.kelvin === kelvin"
+              [disabled]="!kelvinEnabled(kelvin)"
+              (click)="selectKelvin(kelvin)"
+            >
+              <span class="variants__value">{{ kelvin }}K</span>
+              @if (kelvinLabels[kelvin]; as label) {
+                <span class="variants__hint">{{ label }}</span>
+              }
+            </button>
+          }
+        </div>
+      </fieldset>
+    }
+
+    @if (showWatt) {
+      <fieldset class="variants__group">
+        <legend class="variants__legend">Güç</legend>
+        <div class="variants__options">
+          @for (watt of watts; track watt) {
+            <button
+              type="button"
+              class="variants__option variants__option--compact"
+              [class.is-active]="selection.watt === watt"
+              [disabled]="!wattEnabled(watt)"
+              (click)="selectWatt(watt)"
+            >
+              <span class="variants__value">{{ watt }}W</span>
+            </button>
+          }
+        </div>
+      </fieldset>
+    }
+
+    @if (showColor) {
+      <fieldset class="variants__group">
+        <legend class="variants__legend">Renk</legend>
+        <div class="variants__options">
+          @for (color of colors; track color) {
+            <button
+              type="button"
+              class="variants__option variants__option--compact"
+              [class.is-active]="selection.color === color"
+              [disabled]="!colorEnabled(color)"
+              (click)="selectColor(color)"
+            >
+              <span class="variants__value">{{ color }}</span>
+            </button>
+          }
+        </div>
+      </fieldset>
+    }
+  </div>
+}

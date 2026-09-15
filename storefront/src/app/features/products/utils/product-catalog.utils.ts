@@ -64,6 +64,14 @@ export function formatPriceFrom(price: number): string {
   return `${formatted}'dan başlayan`;
 }
 
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat('tr-TR', {
+    style: 'currency',
+    currency: 'TRY',
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
 function wattInRange(watt: number, range: PowerRangeId): boolean {
   switch (range) {
     case '0-10':
