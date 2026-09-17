@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2766D56A-8AA1-465C-B634-7F05291A8B41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeknomLed.Api", "src\TeknomLed.Api\TeknomLed.Api.csproj", "{355F286A-FF97-4593-B225-4C4682A17A09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeknomLed.Application", "src\TeknomLed.Application\TeknomLed.Application.csproj", "{8468D437-7729-49AD-B7ED-FEF97FC9E358}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeknomLed.Domain", "src\TeknomLed.Domain\TeknomLed.Domain.csproj", "{39402329-B500-426F-998F-DDC42A846F25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeknomLed.Infrastructure", "src\TeknomLed.Infrastructure\TeknomLed.Infrastructure.csproj", "{CADBE586-C6FC-4A42-AF1A-34B8D8D1B125}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C3F76E3E-4690-4A82-B37B-B9948C81DBCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeknomLed.Tests", "tests\TeknomLed.Tests\TeknomLed.Tests.csproj", "{D225D330-AD3F-4425-B278-4EB29E300437}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{355F286A-FF97-4593-B225-4C4682A17A09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{355F286A-FF97-4593-B225-4C4682A17A09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{355F286A-FF97-4593-B225-4C4682A17A09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{355F286A-FF97-4593-B225-4C4682A17A09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8468D437-7729-49AD-B7ED-FEF97FC9E358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8468D437-7729-49AD-B7ED-FEF97FC9E358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8468D437-7729-49AD-B7ED-FEF97FC9E358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8468D437-7729-49AD-B7ED-FEF97FC9E358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39402329-B500-426F-998F-DDC42A846F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39402329-B500-426F-998F-DDC42A846F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39402329-B500-426F-998F-DDC42A846F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39402329-B500-426F-998F-DDC42A846F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CADBE586-C6FC-4A42-AF1A-34B8D8D1B125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CADBE586-C6FC-4A42-AF1A-34B8D8D1B125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CADBE586-C6FC-4A42-AF1A-34B8D8D1B125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CADBE586-C6FC-4A42-AF1A-34B8D8D1B125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D225D330-AD3F-4425-B278-4EB29E300437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D225D330-AD3F-4425-B278-4EB29E300437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D225D330-AD3F-4425-B278-4EB29E300437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D225D330-AD3F-4425-B278-4EB29E300437}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{355F286A-FF97-4593-B225-4C4682A17A09} = {2766D56A-8AA1-465C-B634-7F05291A8B41}
+		{8468D437-7729-49AD-B7ED-FEF97FC9E358} = {2766D56A-8AA1-465C-B634-7F05291A8B41}
+		{39402329-B500-426F-998F-DDC42A846F25} = {2766D56A-8AA1-465C-B634-7F05291A8B41}
+		{CADBE586-C6FC-4A42-AF1A-34B8D8D1B125} = {2766D56A-8AA1-465C-B634-7F05291A8B41}
+		{D225D330-AD3F-4425-B278-4EB29E300437} = {C3F76E3E-4690-4A82-B37B-B9948C81DBCC}
+	EndGlobalSection
+EndGlobal

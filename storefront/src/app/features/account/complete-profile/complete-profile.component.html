@@ -1,0 +1,33 @@
+<section class="auth-page">
+  <app-container>
+    <header class="auth-page__intro">
+      <p class="auth-page__eyebrow">Hesabınız</p>
+      <h1 class="auth-page__title">Hoş geldiniz.</h1>
+      <p class="auth-page__lead">
+        Sipariş ve teslimat işlemleri için telefon numaranızı tamamlayın.
+      </p>
+    </header>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="auth-field">
+        <label for="complete-phone">Telefon *</label>
+        <input
+          id="complete-phone"
+          type="tel"
+          formControlName="phone"
+          autocomplete="tel"
+          placeholder="+90 5XX XXX XX XX"
+          (blur)="onPhoneBlur()"
+        />
+      </div>
+
+      @if (errorMessage()) {
+        <p class="auth-form__error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <button type="submit" class="auth-form__submit" [disabled]="submitting()">
+        Devam Et
+      </button>
+    </form>
+  </app-container>
+</section>

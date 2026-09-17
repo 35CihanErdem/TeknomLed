@@ -34,6 +34,16 @@
   cursor: ew-resize;
 }
 
+.comparison__frame--portrait {
+  aspect-ratio: 3 / 4;
+  max-width: min(100%, 34rem);
+  margin-inline: auto;
+}
+
+.comparison__badge:empty {
+  display: none;
+}
+
 .comparison__layer {
   position: absolute;
   inset: 0;
@@ -45,6 +55,10 @@
   object-fit: cover;
   object-position: center;
   pointer-events: none;
+  display: block;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 /* No brightness/filter simulation — OFF and ON are separate image sources */

@@ -1,8 +1,8 @@
 .hero {
   position: relative;
   isolation: isolate;
-  height: 94vh;
-  min-height: 40.625rem;
+  height: 82vh;
+  min-height: 34rem;
   overflow: hidden;
   color: #ffffff;
   background: #040906;
@@ -11,74 +11,181 @@
 .hero__stage {
   position: absolute;
   inset: 0;
-  --light-x: 65%;
-  --light-y: 55%;
-  --spot-size: 170px;
+  --light-x: 58%;
+  --light-y: 48%;
+  --spot-size: clamp(110px, 13vw, 200px);
 }
 
 .hero__photo {
   position: absolute;
   inset: 0;
+  overflow: hidden;
 }
 
 .hero__photo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 42%;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .hero__photo--off {
-  /* Reserved for future LIGHT_OFF base; currently under ON */
+  z-index: 0;
+}
+
+/* Flashlight layer — soft blurred rim */
+.hero__photo--torch {
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.85s var(--ease-out);
+  -webkit-mask-image: radial-gradient(
+    circle var(--spot-size) at var(--light-x) var(--light-y),
+    #000 0%,
+    #000 18%,
+    rgba(0, 0, 0, 0.92) 32%,
+    rgba(0, 0, 0, 0.62) 48%,
+    rgba(0, 0, 0, 0.28) 64%,
+    rgba(0, 0, 0, 0.08) 78%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--spot-size) at var(--light-x) var(--light-y),
+    #000 0%,
+    #000 18%,
+    rgba(0, 0, 0, 0.92) 32%,
+    rgba(0, 0, 0, 0.62) 48%,
+    rgba(0, 0, 0, 0.28) 64%,
+    rgba(0, 0, 0, 0.08) 78%,
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  will-change: mask-image, -webkit-mask-image, opacity;
+}
+
+.hero__stage--day .hero__photo--torch {
   opacity: 0;
+  pointer-events: none;
+}
+
+/* Full lit scene — crossfade when sun selected */
+.hero__photo--full {
+  z-index: 2;
+  opacity: 0;
+  transition:
+    opacity 1s var(--ease-out),
+    transform 1s var(--ease-out),
+    filter 1s var(--ease-out);
+  transform: scale(1.02);
+  filter: brightness(0.92) saturate(0.95);
+  will-change: opacity, transform, filter;
+}
+
+.hero__stage--day .hero__photo--full {
+  opacity: 1;
+  transform: scale(1);
+  filter: brightness(1) saturate(1);
 }
 
 .hero__shade {
   position: absolute;
   inset: 0;
+  z-index: 3;
   background: linear-gradient(
     90deg,
-    rgba(4, 9, 6, 0.75),
-    rgba(4, 9, 6, 0.15) 70%
+    rgba(4, 9, 6, 0.7),
+    rgba(4, 9, 6, 0.16) 62%,
+    rgba(4, 9, 6, 0.26)
   );
   pointer-events: none;
+  transition: opacity 0.9s var(--ease-out), background 0.9s var(--ease-out);
+}
+
+.hero__stage--day .hero__shade {
+  opacity: 0.55;
+  background: linear-gradient(
+    90deg,
+    rgba(4, 9, 6, 0.55),
+    rgba(4, 9, 6, 0.12) 62%,
+    rgba(4, 9, 6, 0.2)
+  );
 }
 
 .hero__spot {
+  display: none;
+}
+
+.hero__stage--static.hero__stage--night .hero__photo--torch {
+  --light-x: 55%;
+  --light-y: 46%;
+  --spot-size: clamp(140px, 22vw, 240px);
+}
+
+.hero__stage--fine.hero__stage--night {
+  --spot-size: clamp(120px, 14vw, 210px);
+}
+
+/* Night / sun split control */
+.hero__mode {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle var(--spot-size) at var(--light-x) var(--light-y),
-    rgba(255, 221, 145, 0.34),
-    rgba(255, 195, 83, 0.08) 35%,
-    transparent 72%
-  );
-  mix-blend-mode: screen;
+  z-index: 5;
+  top: calc(var(--header-height) + 0.85rem);
+  right: var(--container-pad);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem;
+  border: 1px solid rgba(244, 242, 236, 0.22);
+  border-radius: 999px;
+  background: rgba(10, 13, 10, 0.42);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
 }
 
-.hero__stage--static .hero__spot {
-  --light-x: 58%;
-  --light-y: 48%;
-  --spot-size: 220px;
-  background: radial-gradient(
-    ellipse 42% 36% at var(--light-x) var(--light-y),
-    rgba(255, 221, 145, 0.28),
-    rgba(255, 195, 83, 0.07) 42%,
-    transparent 74%
-  );
+.hero__mode-btn {
+  width: 2.55rem;
+  height: 2.55rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: rgba(244, 242, 236, 0.62);
+  transition:
+    color 0.35s var(--ease-out),
+    background 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
 }
 
-.hero__stage--fine {
-  --spot-size: clamp(150px, 14vw, 190px);
+.hero__mode-btn svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: block;
+}
+
+.hero__mode-btn:hover {
+  color: rgba(244, 242, 236, 0.92);
+}
+
+.hero__mode-btn.is-active {
+  color: #181a16;
+  background: var(--color-accent);
+  transform: scale(1.04);
 }
 
 .hero__content {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   max-width: 42rem;
   padding: 0 var(--container-pad);
-  margin-top: 31vh;
+  margin-top: 26vh;
 }
 
 .hero__eyebrow {
@@ -94,7 +201,7 @@
   flex-direction: column;
   margin: 1.25rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(3.25rem, 7vw, 6.375rem);
+  font-size: clamp(3rem, 6.4vw, 5.75rem);
   font-weight: 500;
   line-height: 0.94;
 }
@@ -132,9 +239,9 @@
 
 .hero__hint {
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   right: var(--container-pad);
-  bottom: 2.8rem;
+  bottom: 2.4rem;
   margin: 0;
   font-size: 0.75rem;
   letter-spacing: 0.16em;
@@ -145,26 +252,43 @@
 
 @media (max-width: 800px) {
   .hero {
-    height: 92vh;
-    min-height: 36rem;
+    height: 78vh;
+    min-height: 30rem;
+  }
+
+  .hero__mode {
+    top: calc(var(--header-height) + 0.55rem);
+    padding: 0.15rem;
+  }
+
+  .hero__mode-btn {
+    width: 2.35rem;
+    height: 2.35rem;
   }
 
   .hero__content {
-    margin-top: 27vh;
+    margin-top: 22vh;
     padding-right: 12vw;
   }
 
   .hero__hint {
     left: var(--container-pad);
     right: auto;
-    bottom: 1.75rem;
+    bottom: 1.5rem;
     max-width: 14rem;
     letter-spacing: 0.1em;
+  }
+
+  .hero__stage--static.hero__stage--night .hero__photo--torch {
+    --spot-size: clamp(120px, 34vw, 200px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__spot {
+  .hero__photo--torch,
+  .hero__photo--full,
+  .hero__shade,
+  .hero__mode-btn {
     transition: none;
   }
 }

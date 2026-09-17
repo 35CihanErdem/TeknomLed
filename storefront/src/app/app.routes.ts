@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ShellComponent } from './layout/shell/shell.component';
+import { authGuard, guestGuard } from './core/auth/auth.guards';
 
 export const routes: Routes = [
   {
@@ -81,7 +82,35 @@ export const routes: Routes = [
         title: 'Ödeme | TeknomLed',
       },
       {
+        path: 'account/login',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/account/login/login.component').then(
+            (m) => m.LoginComponent
+          ),
+        title: 'Giriş | TeknomLed',
+      },
+      {
+        path: 'account/register',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/account/register/register.component').then(
+            (m) => m.RegisterComponent
+          ),
+        title: 'Kayıt | TeknomLed',
+      },
+      {
+        path: 'account/complete-profile',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/account/complete-profile/complete-profile.component').then(
+            (m) => m.CompleteProfileComponent
+          ),
+        title: 'Profili Tamamla | TeknomLed',
+      },
+      {
         path: 'account',
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/account/account.component').then(
             (m) => m.AccountComponent
@@ -90,6 +119,7 @@ export const routes: Routes = [
       },
       {
         path: 'account/orders',
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/orders/orders.component').then(
             (m) => m.OrdersComponent

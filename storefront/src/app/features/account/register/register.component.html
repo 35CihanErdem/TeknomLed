@@ -1,0 +1,64 @@
+<section class="auth-page">
+  <app-container>
+    <header class="auth-page__intro">
+      <p class="auth-page__eyebrow">Hesabınız</p>
+      <h1 class="auth-page__title">Hesap oluşturun.</h1>
+    </header>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="auth-field">
+        <label for="register-name">Ad Soyad</label>
+        <input id="register-name" type="text" formControlName="fullName" autocomplete="name" />
+      </div>
+
+      <div class="auth-field">
+        <label for="register-email">E-posta</label>
+        <input id="register-email" type="email" formControlName="email" autocomplete="email" />
+      </div>
+
+      <div class="auth-field">
+        <label for="register-phone">Telefon</label>
+        <input
+          id="register-phone"
+          type="tel"
+          formControlName="phone"
+          autocomplete="tel"
+          placeholder="+90 5XX XXX XX XX"
+        />
+      </div>
+
+      <div class="auth-field">
+        <label for="register-password">Şifre</label>
+        <div class="auth-field__password">
+          <input
+            id="register-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="new-password"
+          />
+          <button type="button" class="auth-field__toggle" (click)="togglePassword()">
+            {{ showPassword() ? 'Gizle' : 'Göster' }}
+          </button>
+        </div>
+        <p class="auth-field__hint">En az 8 karakter</p>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="auth-form__error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <button type="submit" class="auth-form__submit" [disabled]="submitting()">
+        Hesap Oluştur
+      </button>
+    </form>
+
+    <div class="auth-divider" aria-hidden="true"><span>veya</span></div>
+
+    <div #googleButton class="auth-google" aria-label="Google ile devam et"></div>
+
+    <p class="auth-page__switch">
+      Zaten kayıtlı mısınız?
+      <a routerLink="/account/login" [queryParams]="{ returnUrl: returnUrl }">Giriş yap</a>
+    </p>
+  </app-container>
+</section>

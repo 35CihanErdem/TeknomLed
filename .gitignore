@@ -1,0 +1,22 @@
+# Root
+**/backend/**/bin/
+**/backend/**/obj/
+**/backend/**/.vs/
+**/backend/**/appsettings.*.local.json
+**/backend/**/secrets.json
+*.user
+*.suo
+
+# Storefront
+storefront/node_modules/
+storefront/dist/
+storefront/.angular/
+storefront/coverage/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

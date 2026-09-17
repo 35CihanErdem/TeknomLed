@@ -25,6 +25,7 @@
   <div
     #frame
     class="comparison__frame"
+    [class.comparison__frame--portrait]="frameVariant === 'portrait'"
     [style.--reveal]="position() + '%'"
     (pointerdown)="onPointerDown($event)"
     (pointermove)="onPointerMove($event)"

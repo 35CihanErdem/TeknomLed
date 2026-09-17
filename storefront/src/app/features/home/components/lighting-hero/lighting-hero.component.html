@@ -1,38 +1,90 @@
-<section class="hero" aria-label="Ana görsel">
+<section
+  class="hero"
+  [class.hero--day]="sceneMode() === 'day'"
+  [class.hero--night]="sceneMode() === 'night'"
+  aria-label="Ana görsel"
+>
   <div
     #stage
     class="hero__stage"
     [class.hero__stage--fine]="finePointer()"
     [class.hero__stage--static]="!finePointer()"
+    [class.hero__stage--day]="sceneMode() === 'day'"
+    [class.hero__stage--night]="sceneMode() === 'night'"
   >
-    <!--
-      Future: reveal lightOnImage around cursor via mask over lightOffImage.
-      Prototype: cinematic night photo + warm feathered illumination spot.
-    -->
     <div class="hero__photo hero__photo--off" aria-hidden="true">
       <img
         [src]="content.lightOffImage"
         alt=""
-        width="2400"
-        height="1600"
+        width="1024"
+        height="512"
         decoding="async"
         fetchpriority="high"
       />
     </div>
 
-    <div class="hero__photo hero__photo--on">
+    <!-- Night: flashlight peek at lit photo -->
+    <div class="hero__photo hero__photo--torch" aria-hidden="true">
+      <img
+        [src]="content.lightOnImage"
+        alt=""
+        width="1024"
+        height="512"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+
+    <!-- Day: full lit scene, crossfades in -->
+    <div class="hero__photo hero__photo--full" aria-hidden="true">
       <img
         [src]="content.lightOnImage"
         [alt]="content.imageAlt"
-        width="2400"
-        height="1600"
+        width="1024"
+        height="512"
         decoding="async"
         fetchpriority="high"
       />
     </div>
 
     <div class="hero__shade" aria-hidden="true"></div>
-    <div class="hero__spot" aria-hidden="true"></div>
+  </div>
+
+  <div
+    class="hero__mode"
+    role="group"
+    aria-label="Sahne aydınlatması"
+  >
+    <button
+      type="button"
+      class="hero__mode-btn"
+      [class.is-active]="sceneMode() === 'night'"
+      [attr.aria-pressed]="sceneMode() === 'night'"
+      aria-label="Gece"
+      (click)="setSceneMode('night')"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          fill="currentColor"
+          d="M14.3 2.1a1 1 0 0 1 .9 1.5A8.2 8.2 0 1 0 20.4 14a1 1 0 0 1 1.6.8A10.2 10.2 0 1 1 13.2 2.2a1 1 0 0 1 1.1-.1Z"
+        />
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="hero__mode-btn"
+      [class.is-active]="sceneMode() === 'day'"
+      [attr.aria-pressed]="sceneMode() === 'day'"
+      aria-label="Işık açık"
+      (click)="setSceneMode('day')"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          fill="currentColor"
+          d="M12 7.2a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6Zm0-5.2a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17.2a1 1 0 0 1 1 1V22a1 1 0 1 1-2 0v-1.8a1 1 0 0 1 1-1ZM3 11a1 1 0 0 1 1-1h1.4a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm15.6 0a1 1 0 0 1 1-1H21a1 1 0 1 1 0 2h-1.4a1 1 0 0 1-1-1ZM5.6 5.6a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4Zm10.4 10.4a1 1 0 0 1 1.4 0l1 1a1 1 0 1 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4ZM18.4 5.6a1 1 0 0 1 0 1.4l-1 1a1 1 0 1 1-1.4-1.4l1-1a1 1 0 0 1 1.4 0ZM7.99 16a1 1 0 0 1 0 1.4l-1 1a1 1 0 1 1-1.4-1.4l1-1a1 1 0 0 1 1.4 0Z"
+        />
+      </svg>
+    </button>
   </div>
 
   <div class="hero__content">
@@ -47,7 +99,7 @@
     </a>
   </div>
 
-  @if (finePointer() && hintVisible()) {
+  @if (finePointer() && hintVisible() && sceneMode() === 'night') {
     <p class="hero__hint">{{ content.interactionHint }}</p>
   }
 </section>

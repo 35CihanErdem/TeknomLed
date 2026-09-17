@@ -1,0 +1,47 @@
+<section class="account-page">
+  <app-container>
+    <header class="account-page__intro">
+      <p class="account-page__eyebrow">Hesabım</p>
+      <h1 class="account-page__title">Hesap bilgileri</h1>
+    </header>
+
+    @if (user(); as current) {
+      <dl class="account-page__details">
+        <div>
+          <dt>Ad Soyad</dt>
+          <dd>{{ current.fullName }}</dd>
+        </div>
+        <div>
+          <dt>E-posta</dt>
+          <dd>{{ current.email }}</dd>
+        </div>
+        <div>
+          <dt>Telefon</dt>
+          <dd>{{ current.phone || 'Tamamlanmadı' }}</dd>
+        </div>
+        <div>
+          <dt>Profil</dt>
+          <dd>
+            {{ current.profileComplete ? 'Tamamlandı' : 'Telefon gerekli' }}
+          </dd>
+        </div>
+      </dl>
+
+      @if (!current.profileComplete) {
+        <a routerLink="/account/complete-profile" class="account-page__cta">
+          Profili Tamamla →
+        </a>
+      }
+
+      <nav class="account-page__nav" aria-label="Hesap menüsü">
+        <a routerLink="/account/orders">Siparişler</a>
+        <span>Adresler</span>
+        <span>Hesap Bilgileri</span>
+      </nav>
+
+      <button type="button" class="account-page__logout" (click)="logout()">
+        Çıkış Yap
+      </button>
+    }
+  </app-container>
+</section>

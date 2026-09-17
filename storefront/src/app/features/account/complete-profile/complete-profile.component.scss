@@ -1,0 +1,9 @@
+@use '../styles/auth-page';
+
+.auth-page__lead {
+  margin: 1rem 0 0;
+  max-width: 28rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-ink-muted);
+}

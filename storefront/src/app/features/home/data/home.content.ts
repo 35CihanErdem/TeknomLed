@@ -65,10 +65,12 @@ export interface HomeTrustHighlight {
 }
 
 const HOME_IMG = '/assets/images/home';
+/** Cache-bust when replacing aligned photography. */
+const PAIR_VER = 'v10';
 
 const IMG = {
-  heroLightOff: `${HOME_IMG}/hero-light-off.jpg`,
-  heroLightOn: `${HOME_IMG}/hero-light-on.jpg`,
+  heroLightOff: `${HOME_IMG}/pair-off-${PAIR_VER}.jpg`,
+  heroLightOn: `${HOME_IMG}/pair-on-${PAIR_VER}.jpg`,
   categoryFacade: `${HOME_IMG}/category-facade.jpg`,
   categoryWall: `${HOME_IMG}/category-decorative.jpg`,
   categoryLandscape: `${HOME_IMG}/category-garden.jpg`,
@@ -80,13 +82,8 @@ const IMG = {
   projectVilla: `${HOME_IMG}/project-villa.jpg`,
   projectLandscape: `${HOME_IMG}/project-landscape.jpg`,
   projectFacade: `${HOME_IMG}/category-path.jpg`,
-  /**
-   * Official slots (customer-supplied matched pair):
-   *   light-comparison-off.webp / light-comparison-on.webp
-   * Development fallback: identical temporary JPGs (no CSS OFF simulation).
-   */
-  comparisonLightOff: `${HOME_IMG}/light-comparison-off.jpg`,
-  comparisonLightOn: `${HOME_IMG}/light-comparison-on.jpg`,
+  comparisonLightOff: `${HOME_IMG}/pair-off-${PAIR_VER}.jpg`,
+  comparisonLightOn: `${HOME_IMG}/pair-on-${PAIR_VER}.jpg`,
 } as const;
 
 export const HOME_HERO: HomeHeroContent = {
@@ -97,7 +94,7 @@ export const HOME_HERO: HomeHeroContent = {
     'Mimari çizgileri görünür kılan, yaşam alanlarını gece yeniden tasarlayan profesyonel LED aydınlatma çözümleri.',
   ctaLabel: 'KOLEKSİYONU KEŞFET →',
   ctaPath: '/products',
-  interactionHint: "● MOUSE'U HAREKET ETTİR — IŞIĞI KEŞFET",
+  interactionHint: "● MOUSE'U HAREKET ETTİR — FENERİ GEZDİR",
   lightOffImage: IMG.heroLightOff,
   lightOnImage: IMG.heroLightOn,
   imageAlt: 'Gece mimari dış mekân aydınlatma sahnesi',
@@ -196,12 +193,13 @@ export const HOME_COMPARISON: HomeComparisonContent = {
   eyebrow: 'Deneyim',
   title: 'Önce ışığı deneyimleyin.',
   description:
-    'Aydınlatmanın mekâna kattığı farkı yan yana görün. Üretimde hizalı LIGHT_OFF / LIGHT_ON görselleriyle değiştirilebilir.',
+    'Aydınlatmanın mekâna kattığı farkı yan yana görün. Fareyi sürükleyerek ışık kapalı ve açık hali karşılaştırın.',
   lightOffImage: IMG.comparisonLightOff,
   lightOnImage: IMG.comparisonLightOn,
   imageAlt: 'Mimari mekân aydınlatma karşılaştırması',
-  beforeLabel: 'IŞIK KAPALI',
-  afterLabel: 'IŞIK AÇIK',
+  // Labels are already composited into the photography.
+  beforeLabel: '',
+  afterLabel: '',
 };
 
 export const HOME_TRUST = {

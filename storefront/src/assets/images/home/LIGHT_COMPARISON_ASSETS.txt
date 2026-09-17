@@ -1,10 +1,7 @@
-﻿OFFICIAL SLOTS (to be supplied by customer — matched camera/crop pair):
-  light-comparison-off.webp
-  light-comparison-on.webp
+﻿* hero-light-off.jpg / hero-light-on.jpg
+  Matched villa pair for cursor-reveal hero.
 
-DEVELOPMENT FALLBACK (current):
-  light-comparison-off.jpg
-  light-comparison-on.jpg
-  Identical temporary placeholders so the slider architecture works without
-  CSS brightness/filter faking a LIGHT_OFF state.
-  Replace both with genuine matched LIGHT_OFF / LIGHT_ON photography.
+* light-comparison-off.jpg / light-comparison-on.jpg
+  Same matched pair for before/after slider.
+
+Do not fake LIGHT_OFF with CSS brightness filters.

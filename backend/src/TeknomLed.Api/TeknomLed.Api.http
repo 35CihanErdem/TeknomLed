@@ -1,0 +1,6 @@
+@TeknomLed.Api_HostAddress = http://localhost:5223
+
+GET {{TeknomLed.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

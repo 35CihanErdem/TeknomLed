@@ -36,6 +36,8 @@ export class LightComparisonComponent {
   @Input() showHeader = true;
   /** When true, render only the comparison frame (Product Detail embedding). */
   @Input() embedded = false;
+  /** Frame proportion for the comparison media. */
+  @Input() frameVariant: 'wide' | 'portrait' = 'wide';
 
   readonly position = signal(50);
 

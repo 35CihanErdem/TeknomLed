@@ -1,7 +1,8 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../core/auth/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { ContainerComponent } from '../../shared/components/container/container.component';
 
@@ -24,10 +25,18 @@ export class HeaderComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cart = inject(CartService);
+  private readonly auth = inject(AuthService);
 
   readonly menuOpen = signal(false);
   readonly overlay = signal(this.isHomeUrl(this.router.url));
   readonly cartQuantity = this.cart.totalQuantity;
+  readonly isAuthenticated = this.auth.isAuthenticated;
+  readonly accountLabel = computed(() =>
+    this.isAuthenticated() ? 'Hesabım' : 'Giriş'
+  );
+  readonly accountPath = computed(() =>
+    this.isAuthenticated() ? '/account' : '/account/login'
+  );
 
   readonly primaryNav: NavItem[] = [
     { label: 'Ürünler', path: '/products' },
@@ -37,10 +46,7 @@ export class HeaderComponent {
     { label: 'İletişim', path: '/contact' },
   ];
 
-  readonly utilityNav: NavItem[] = [
-    { label: 'Arama', path: '/search' },
-    { label: 'Hesap', path: '/account' },
-  ];
+  readonly utilityNav: NavItem[] = [{ label: 'Arama', path: '/search' }];
 
   constructor() {
     this.router.events

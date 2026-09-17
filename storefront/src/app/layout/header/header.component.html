@@ -29,6 +29,15 @@
         }
 
         <a
+          [routerLink]="accountPath()"
+          routerLinkActive="is-active"
+          class="header__utility"
+          (click)="closeMenu()"
+        >
+          {{ accountLabel() }}
+        </a>
+
+        <a
           routerLink="/cart"
           routerLinkActive="is-active"
           class="header__utility header__cart"
@@ -92,6 +101,15 @@
             {{ item.label }}
           </a>
         }
+
+        <a
+          [routerLink]="accountPath()"
+          routerLinkActive="is-active"
+          class="header__drawer-link header__drawer-link--utility"
+          (click)="closeMenu()"
+        >
+          {{ accountLabel() }}
+        </a>
 
         <a
           routerLink="/cart"

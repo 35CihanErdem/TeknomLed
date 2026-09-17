@@ -9,6 +9,8 @@ import {
 import { RouterLink } from '@angular/router';
 import { HOME_HERO, HomeHeroContent } from '../../data/home.content';
 
+export type HeroSceneMode = 'night' | 'day';
+
 @Component({
   selector: 'app-lighting-hero',
   standalone: true,
@@ -20,15 +22,16 @@ export class LightingHeroComponent implements OnDestroy {
   readonly content: HomeHeroContent = HOME_HERO;
   readonly hintVisible = signal(true);
   readonly finePointer = signal(false);
+  readonly sceneMode = signal<HeroSceneMode>('night');
 
   @ViewChild('stage', { static: true })
   private stageRef!: ElementRef<HTMLElement>;
 
   private rafId = 0;
-  private pendingX = 65;
-  private pendingY = 55;
-  private currentX = 65;
-  private currentY = 55;
+  private pendingX = 58;
+  private pendingY = 48;
+  private currentX = 58;
+  private currentY = 48;
   private hasInteracted = false;
   private animating = false;
 
@@ -51,8 +54,19 @@ export class LightingHeroComponent implements OnDestroy {
     }
   }
 
+  setSceneMode(mode: HeroSceneMode): void {
+    if (this.sceneMode() === mode) {
+      return;
+    }
+    this.sceneMode.set(mode);
+    this.hintVisible.set(mode === 'night' && this.finePointer());
+  }
+
   @HostListener('pointermove', ['$event'])
   onPointerMove(event: PointerEvent): void {
+    if (this.sceneMode() !== 'night') {
+      return;
+    }
     if (!this.finePointer() || event.pointerType === 'touch') {
       return;
     }
@@ -67,11 +81,11 @@ export class LightingHeroComponent implements OnDestroy {
 
   @HostListener('pointerleave')
   onPointerLeave(): void {
-    if (!this.finePointer()) {
+    if (this.sceneMode() !== 'night' || !this.finePointer()) {
       return;
     }
-    this.pendingX = 65;
-    this.pendingY = 55;
+    this.pendingX = 58;
+    this.pendingY = 48;
     this.startTracking();
   }
 
