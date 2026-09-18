@@ -8,6 +8,7 @@ import {
   AdminApplicationAreaWriteRequest,
   AdminCategoryDto,
   AdminCategoryWriteRequest,
+  AdminMediaDto,
   AdminPagedResult,
   AdminProductDetailDto,
   AdminProductListItemDto,
@@ -121,6 +122,57 @@ export class AdminCatalogService {
       .put<AdminApplicationAreaDto>(
         `${this.apiBase}/api/admin/application-areas/${id}`,
         body
+      )
+      .pipe(catchError((err) => this.mapError(err)));
+  }
+
+  uploadProductMedia(
+    productId: string,
+    file: File,
+    type: string,
+    altText?: string,
+    sortOrder?: number
+  ): Observable<AdminMediaDto> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    form.append('type', type);
+    if (altText?.trim()) {
+      form.append('altText', altText.trim());
+    }
+    if (sortOrder != null) {
+      form.append('sortOrder', String(sortOrder));
+    }
+
+    return this.http
+      .post<AdminMediaDto>(
+        `${this.apiBase}/api/admin/products/${productId}/media`,
+        form
+      )
+      .pipe(catchError((err) => this.mapError(err)));
+  }
+
+  updateProductMedia(
+    productId: string,
+    mediaId: string,
+    body: {
+      type: string;
+      altText?: string | null;
+      sortOrder: number;
+      isActive: boolean;
+    }
+  ): Observable<AdminMediaDto> {
+    return this.http
+      .put<AdminMediaDto>(
+        `${this.apiBase}/api/admin/products/${productId}/media/${mediaId}`,
+        body
+      )
+      .pipe(catchError((err) => this.mapError(err)));
+  }
+
+  deleteProductMedia(productId: string, mediaId: string): Observable<void> {
+    return this.http
+      .delete<void>(
+        `${this.apiBase}/api/admin/products/${productId}/media/${mediaId}`
       )
       .pipe(catchError((err) => this.mapError(err)));
   }

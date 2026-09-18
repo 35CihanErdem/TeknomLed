@@ -25,6 +25,7 @@ public static class DependencyInjection
         });
         services.Configure<GoogleAuthOptions>(configuration.GetSection(GoogleAuthOptions.SectionName));
         services.Configure<CorsOptions>(configuration.GetSection(CorsOptions.SectionName));
+        services.Configure<MediaOptions>(configuration.GetSection(MediaOptions.SectionName));
 
         var connectionString = ConfigCrypto.UnprotectIfNeeded(
             configuration.GetConnectionString("DefaultConnection")
@@ -37,10 +38,13 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICatalogService, CatalogService>();
         services.AddScoped<IAdminCatalogService, AdminCatalogService>();
+        services.AddScoped<IAdminProductMediaService, AdminProductMediaService>();
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IGoogleTokenValidator, GoogleTokenValidator>();
-        services.AddSingleton<IMediaPathResolver, PassthroughMediaPathResolver>();
+        services.AddSingleton<IMediaPathResolver, ConfiguredMediaPathResolver>();
+        services.AddSingleton<LocalMediaStorage>();
+        services.AddSingleton<IMediaStorage>(sp => sp.GetRequiredService<LocalMediaStorage>());
 
         return services;
     }

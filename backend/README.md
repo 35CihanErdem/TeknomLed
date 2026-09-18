@@ -35,6 +35,10 @@ Set via `appsettings.Development.json`, user-secrets, or environment variables:
 | `Jwt__RefreshTokenDays` | Refresh session lifetime |
 | `Google__ClientId` | Google Web Client ID (audience) |
 | `Cors__AllowedOrigins__0` | Allowed SPA origin |
+| `Media__Provider` | Storage provider (`Local`) |
+| `Media__LocalRoot` | Local disk root (relative to content root) |
+| `Media__PublicBasePath` | Public URL prefix (`/media`) |
+| `Media__MaxImageBytes` | Max upload size (default 5 MB) |
 
 **Do not commit production secrets.**
 
@@ -88,10 +92,19 @@ Angular storefront proxies `/api` → `http://localhost:5223` in development.
 | GET | `/api/application-areas` | Public |
 | POST/PUT/DELETE | `/api/admin/products…` | PRODUCT_CREATE / PRODUCT_UPDATE |
 | POST/PUT | `/api/admin/categories…` | PRODUCT_CREATE / PRODUCT_UPDATE |
+| GET | `/api/admin/products` / `{id}` | PRODUCT_VIEW |
+| GET/POST/PUT | `/api/admin/application-areas…` | PRODUCT_* |
+| POST/PUT/DELETE | `/api/admin/products/{id}/media…` | PRODUCT_UPDATE |
 
 **Semantics:** `Product.IsActive = false` means not publicly listed (draft/hidden). Soft-deactivate preferred over hard delete.
 
-**Media:** DB stores path/URL metadata only. `IMediaPathResolver` is the swap point for future S3/R2/CDN.
+**Media (Phase 9C):**
+- PostgreSQL stores `ProductMedia` metadata/path only (never binaries / Base64).
+- `IMediaStorage` + `LocalMediaStorage` write files under `Media:LocalRoot` (default `App_Data/media`).
+- Public URLs via `IMediaPathResolver` → `/media/...` (static files; no directory browsing).
+- Allowed uploads: JPEG, PNG, WebP; max size `Media:MaxImageBytes` (default 5 MB).
+- Angular proxies `/api` and `/media` to the API in development.
+- Future S3-compatible provider plugs into `IMediaStorage` / resolver without changing catalog entities.
 
 **Seeded products are DEV/TEST data**, not the official customer catalogue.
 
@@ -101,6 +114,8 @@ Angular storefront proxies `/api` → `http://localhost:5223` in development.
 
 1. `InitialIdentity`
 2. `CatalogFoundation`
+
+(Phase 9C: no new migration — existing `ProductMedia` schema reused.)
 
 ## Tests
 
@@ -112,4 +127,5 @@ dotnet test
 
 - Guest browse / guest cart / guest checkout remain supported.
 - Phone profile completion flow from Phase 7 is unchanged.
-- Orders, Payments, Shipping, Admin UI, WhatsApp are not implemented here.
+- Orders, Payments, Shipping, WhatsApp are not implemented here.
+- Production object storage (S3/R2) is deferred; local disk is the Phase 9C provider.

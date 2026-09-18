@@ -155,21 +155,89 @@
       </section>
 
       <section class="pe__panel">
-        <h3 class="pe__panel-title">Medya (salt okunur — Phase 9C)</h3>
-        @if (existingMedia().length === 0) {
-          <p class="pe__muted">Kayıtlı medya yok. Yükleme Phase 9C’de eklenecek; storefront mevcut placeholder davranışını kullanır.</p>
+        <h3 class="pe__panel-title">Medya</h3>
+        @if (isNew) {
+          <p class="pe__muted">Ürünü kaydettikten sonra medya ekleyebilirsiniz.</p>
         } @else {
-          <ul class="pe__media">
-            @for (m of existingMedia(); track m.id) {
-              <li>
-                <strong>{{ m.type }}</strong>
-                <span>{{ m.path }}</span>
-                @if (m.altText) {
-                  <span class="pe__muted">{{ m.altText }}</span>
-                }
-              </li>
-            }
-          </ul>
+          @if (mediaError()) {
+            <p class="pe__error" role="alert">{{ mediaError() }}</p>
+          }
+
+          @if (canManageMedia) {
+            <div class="pe__upload">
+              <label class="pe__field">
+                <span>Dosya (JPEG / PNG / WebP)</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" (change)="onFileSelected($event)" />
+              </label>
+              <label class="pe__field">
+                <span>Tip</span>
+                <select [(ngModel)]="uploadType" [ngModelOptions]="{ standalone: true }">
+                  @for (t of mediaTypes; track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+              </label>
+              <label class="pe__field">
+                <span>Alt metin</span>
+                <input [(ngModel)]="uploadAlt" [ngModelOptions]="{ standalone: true }" />
+              </label>
+              <button
+                type="button"
+                class="pe__btn pe__btn--primary"
+                [disabled]="uploading() || !selectedFile"
+                (click)="uploadMedia()"
+              >
+                {{ uploading() ? 'Yükleniyor…' : 'Yükle' }}
+              </button>
+            </div>
+          }
+
+          @if (mediaItems().length === 0) {
+            <p class="pe__muted">Kayıtlı medya yok. Storefront mevcut placeholder davranışını kullanır.</p>
+          } @else {
+            <ul class="pe__media-list">
+              @for (m of mediaItems(); track m.id) {
+                <li class="pe__media-item">
+                  <img class="pe__thumb" [src]="m.url" [alt]="m.altText || m.type" />
+                  <div class="pe__media-meta">
+                    <label class="pe__field">
+                      <span>Tip</span>
+                      <select
+                        [value]="m.type"
+                        (change)="saveMediaMeta(m, $any($event.target).value, m.altText || '', m.sortOrder)"
+                        [disabled]="!canManageMedia"
+                      >
+                        @for (t of mediaTypes; track t) {
+                          <option [value]="t">{{ t }}</option>
+                        }
+                      </select>
+                    </label>
+                    <label class="pe__field">
+                      <span>Alt</span>
+                      <input
+                        [value]="m.altText || ''"
+                        (change)="saveMediaMeta(m, m.type, $any($event.target).value, m.sortOrder)"
+                        [disabled]="!canManageMedia"
+                      />
+                    </label>
+                    <label class="pe__field">
+                      <span>Sıra</span>
+                      <input
+                        type="number"
+                        [value]="m.sortOrder"
+                        (change)="saveMediaMeta(m, m.type, m.altText || '', +$any($event.target).value)"
+                        [disabled]="!canManageMedia"
+                      />
+                    </label>
+                    <div class="pe__media-url pe__muted">{{ m.url }}</div>
+                    @if (canManageMedia) {
+                      <button type="button" class="pe__link-btn" (click)="deleteMedia(m)">Sil</button>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
         }
       </section>
     </form>

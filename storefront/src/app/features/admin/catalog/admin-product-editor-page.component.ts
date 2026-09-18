@@ -3,6 +3,7 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -11,7 +12,7 @@ import { AdminCatalogService } from '../../../core/admin/admin-catalog.service';
 import {
   AdminApplicationAreaDto,
   AdminCategoryDto,
-  AdminMediaInput,
+  AdminMediaDto,
   AdminProductDetailDto,
   AdminProductWriteRequest,
 } from '../../../core/admin/admin-catalog.models';
@@ -19,10 +20,18 @@ import { HasUnsavedChanges } from '../../../core/admin/unsaved-changes.guard';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Permission } from '../../../core/auth/permissions';
 
+const MEDIA_TYPES = [
+  'DEFAULT',
+  'GALLERY',
+  'LIGHT_ON',
+  'LIGHT_OFF',
+  'APPLICATION',
+] as const;
+
 @Component({
   selector: 'app-admin-product-editor-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './admin-product-editor-page.component.html',
   styleUrl: './admin-product-editor-page.component.scss',
 })
@@ -33,15 +42,22 @@ export class AdminProductEditorPageComponent implements OnInit, HasUnsavedChange
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
 
+  readonly mediaTypes = MEDIA_TYPES;
   readonly categories = signal<AdminCategoryDto[]>([]);
   readonly areas = signal<AdminApplicationAreaDto[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);
+  readonly uploading = signal(false);
   readonly error = signal('');
-  readonly existingMedia = signal<AdminMediaInput[]>([]);
+  readonly mediaError = signal('');
+  readonly mediaItems = signal<AdminMediaDto[]>([]);
 
   productId: string | null = null;
   isNew = true;
+
+  uploadType: string = 'DEFAULT';
+  uploadAlt = '';
+  selectedFile: File | null = null;
 
   readonly form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
@@ -68,6 +84,10 @@ export class AdminProductEditorPageComponent implements OnInit, HasUnsavedChange
     return this.isNew
       ? this.auth.can(Permission.ProductCreate)
       : this.auth.can(Permission.ProductUpdate);
+  }
+
+  get canManageMedia(): boolean {
+    return !this.isNew && !!this.productId && this.auth.can(Permission.ProductUpdate);
   }
 
   get title(): string {
@@ -194,6 +214,78 @@ export class AdminProductEditorPageComponent implements OnInit, HasUnsavedChange
     return ids.includes(areaId);
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] ?? null;
+  }
+
+  uploadMedia(): void {
+    if (!this.canManageMedia || !this.productId || !this.selectedFile) {
+      this.mediaError.set('Dosya seçin.');
+      return;
+    }
+
+    this.uploading.set(true);
+    this.mediaError.set('');
+    this.catalog
+      .uploadProductMedia(
+        this.productId,
+        this.selectedFile,
+        this.uploadType,
+        this.uploadAlt || undefined
+      )
+      .subscribe({
+        next: (item) => {
+          this.mediaItems.update((list) =>
+            [...list, item].sort((a, b) => a.sortOrder - b.sortOrder)
+          );
+          this.selectedFile = null;
+          this.uploadAlt = '';
+          this.uploading.set(false);
+        },
+        error: (err) => {
+          this.mediaError.set(this.catalog.extractErrorMessage(err));
+          this.uploading.set(false);
+        },
+      });
+  }
+
+  saveMediaMeta(item: AdminMediaDto, type: string, altText: string, sortOrder: number): void {
+    if (!this.productId || !this.canManageMedia) {
+      return;
+    }
+    this.catalog
+      .updateProductMedia(this.productId, item.id, {
+        type,
+        altText: altText || null,
+        sortOrder,
+        isActive: true,
+      })
+      .subscribe({
+        next: (updated) => {
+          this.mediaItems.update((list) =>
+            list.map((m) => (m.id === updated.id ? updated : m))
+          );
+        },
+        error: (err) => this.mediaError.set(this.catalog.extractErrorMessage(err)),
+      });
+  }
+
+  deleteMedia(item: AdminMediaDto): void {
+    if (!this.productId || !this.canManageMedia) {
+      return;
+    }
+    if (!window.confirm('Bu medya silinsin mi?')) {
+      return;
+    }
+    this.catalog.deleteProductMedia(this.productId, item.id).subscribe({
+      next: () => {
+        this.mediaItems.update((list) => list.filter((m) => m.id !== item.id));
+      },
+      error: (err) => this.mediaError.set(this.catalog.extractErrorMessage(err)),
+    });
+  }
+
   save(): void {
     if (!this.canSave) {
       this.error.set('Bu işlem için yetkiniz yok.');
@@ -240,7 +332,8 @@ export class AdminProductEditorPageComponent implements OnInit, HasUnsavedChange
           sortOrder: Number(s.sortOrder ?? index),
         };
       }),
-      media: this.existingMedia(),
+      // Media is managed via dedicated upload endpoints (preserve existing on empty).
+      media: [],
     };
 
     this.saving.set(true);
@@ -306,17 +399,7 @@ export class AdminProductEditorPageComponent implements OnInit, HasUnsavedChange
       });
     }
 
-    this.existingMedia.set(
-      product.media.map((m) => ({
-        id: m.id,
-        type: m.type,
-        path: m.url,
-        altText: m.altText,
-        sortOrder: m.sortOrder,
-        isActive: true,
-      }))
-    );
-
+    this.mediaItems.set([...product.media].sort((a, b) => a.sortOrder - b.sortOrder));
     this.form.markAsPristine();
   }
 

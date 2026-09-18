@@ -1,12 +1,15 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TeknomLed.Api.Authorization;
 using TeknomLed.Api.Middleware;
 using TeknomLed.Application.Options;
 using TeknomLed.Infrastructure;
+using TeknomLed.Infrastructure.Catalog;
 using TeknomLed.Infrastructure.Configuration;
 using TeknomLed.Infrastructure.Persistence;
 using CorsOptions = TeknomLed.Application.Options.CorsOptions;
@@ -94,6 +97,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+var mediaOptions = app.Services.GetRequiredService<IOptions<MediaOptions>>().Value;
+var localStorage = app.Services.GetRequiredService<LocalMediaStorage>();
+var publicBase = string.IsNullOrWhiteSpace(mediaOptions.PublicBasePath)
+    ? "/media"
+    : mediaOptions.PublicBasePath.Trim().Replace('\\', '/');
+if (!publicBase.StartsWith('/'))
+{
+    publicBase = "/" + publicBase;
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(localStorage.RootPath),
+    RequestPath = publicBase.TrimEnd('/'),
+    ServeUnknownFileTypes = false
+});
 
 app.UseCors("Storefront");
 app.UseAuthentication();

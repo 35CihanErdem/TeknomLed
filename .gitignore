@@ -4,6 +4,7 @@
 **/backend/**/.vs/
 **/backend/**/appsettings.*.local.json
 **/backend/**/secrets.json
+**/backend/**/App_Data/media/
 *.user
 *.suo
 

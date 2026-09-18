@@ -101,9 +101,7 @@ Admin product list supports server-side `search`, `category`, `isActive`, `sort`
 - ASP.NET `RequirePermission` = authoritative
 
 ### Media boundary (Phase 9C)
-- Existing `ProductMedia` metadata shown read-only in editor
-- No binary upload, no Base64, no object storage, no invented image URLs
-- Empty media on update preserves existing rows
+See Phase 9C below.
 
 ### Angular architecture
 - `AdminCatalogService` + admin DTOs (separate from public `ProductCatalogService`)
@@ -112,17 +110,61 @@ Admin product list supports server-side `search`, `category`, `isActive`, `sort`
 - `AdminCatalogServiceTests`: inactive visibility, create, duplicate slug, invalid category, variant validation, application-area persistence, update/activate, deactivate, category/area rules
 - Existing `CatalogServiceTests` retained
 
-### Backend gaps → Phase 9D (users / access)
-- User list / detail, role assignment, role↔permission management APIs + UI
+## Phase 9C — Product Media Upload + Storage Abstraction
+Status: Complete
+
+Current Phase: PHASE 9C — MEDIA UPLOAD
+
+### Storage abstraction
+- `IMediaStorage` → `LocalMediaStorage` (dev)
+- Future: S3-compatible adapter without changing catalog/domain
+- `IMediaPathResolver` → `ConfiguredMediaPathResolver` (`/media/...` + legacy `/assets/...`)
+
+### Configuration (`Media` section)
+- `Provider`: Local
+- `LocalRoot`: `App_Data/media` (relative to API content root; not machine-specific)
+- `PublicBasePath`: `/media`
+- `MaxImageBytes`: 5242880 (5 MB)
+
+### Admin media endpoints
+| Method | Path | Permission |
+|--------|------|------------|
+| POST | `/api/admin/products/{id}/media` | PRODUCT_UPDATE (multipart) |
+| PUT | `/api/admin/products/{id}/media/{mediaId}` | PRODUCT_UPDATE |
+| DELETE | `/api/admin/products/{id}/media/{mediaId}` | PRODUCT_UPDATE |
+
+### Validation
+- JPEG / PNG / WebP only (extension + MIME + magic bytes)
+- Empty / oversized rejected
+- Path traversal blocked; unique generated filenames
+- No Base64 / no binaries in PostgreSQL
+
+### Public delivery
+- Files served at `http://localhost:5223/media/...`
+- Angular proxy forwards `/media` → API
+- ProductMedia.Path stores storage-relative key; DTOs expose resolved URL
+
+### Admin editor
+- Create product first → then upload
+- Type / alt / sort / thumbnail / delete
+- LIGHT_ON + LIGHT_OFF are distinct assets (no CSS fake OFF)
+
+### Storefront
+- DEFAULT → card primary; GALLERY → detail gallery
+- LightComparison unlocks only for genuine distinct LIGHT_OFF + LIGHT_ON pairs (`/media/products/...` or official `/assets/images/products/.../light-*.{ext}`)
+
+### Tests
+- `AdminProductMediaServiceTests` (temp storage directory)
 
 ### Still deferred
-- Phase 9C media upload / object storage
+- S3/R2 object storage adapter
 - Phase 9D user/access APIs + UI
+- DOCUMENT/VIDEO upload
 - Orders / Payment / Shipping
 - WhatsApp / cart merge / server-side cart
 
-### Build / test (Phase 9B)
+### Build / test (Phase 9C)
 - `npm run build` — pass
-- `dotnet test` — pass (incl. AdminCatalogServiceTests)
+- `dotnet test` — 38 tests pass
 
 See also: `GOOGLE_AUTH_SETUP.md`, `backend/README.md`

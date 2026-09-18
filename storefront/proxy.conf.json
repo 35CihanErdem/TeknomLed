@@ -1,6 +1,6 @@
 [
   {
-    "context": ["/api"],
+    "context": ["/api", "/media"],
     "target": "http://localhost:5223",
     "secure": false,
     "changeOrigin": true,

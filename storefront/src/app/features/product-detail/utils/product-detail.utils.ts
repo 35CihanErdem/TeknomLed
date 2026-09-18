@@ -36,8 +36,10 @@ export function getApplicationImages(product: Product): ProductImage[] {
 }
 
 /**
- * Genuine LIGHT_OFF / LIGHT_ON pairs only under official product asset paths.
- * Temporary mismatched mock scenes must NOT unlock the comparison UI.
+ * Genuine LIGHT_OFF / LIGHT_ON pairs only — never CSS-faked OFF states.
+ * Accepts:
+ * - legacy official product asset paths under /assets/images/products/...
+ * - uploaded storage URLs under /media/products/...
  */
 export function getGenuineLightPair(
   product: Product
@@ -53,13 +55,19 @@ export function getGenuineLightPair(
     return null;
   }
 
-  const official =
-    /\/assets\/images\/products\/[^/]+\/light-(off|on)\.(webp|jpg|jpeg|png)$/i;
-  if (!official.test(off) || !official.test(on)) {
+  if (!isGenuineLightAssetUrl(off) || !isGenuineLightAssetUrl(on)) {
     return null;
   }
 
   return { lightOffImage: off, lightOnImage: on };
+}
+
+function isGenuineLightAssetUrl(url: string): boolean {
+  const path = url.split('?')[0] ?? url;
+  const official =
+    /\/assets\/images\/products\/[^/]+\/light-(off|on)\.(webp|jpg|jpeg|png)$/i;
+  const uploaded = /\/media\/products\/[^/]+\/[^/]+\.(webp|jpg|jpeg|png)$/i;
+  return official.test(path) || uploaded.test(path);
 }
 
 export function uniqueKelvins(variants: ProductVariant[]): number[] {
