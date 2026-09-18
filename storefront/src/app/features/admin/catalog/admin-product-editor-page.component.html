@@ -1,0 +1,177 @@
+<section class="pe">
+  <header class="pe__head">
+    <div>
+      <a class="pe__back" routerLink="/admin/catalog/products">← Ürün listesi</a>
+      <h2 class="pe__title">{{ title }}</h2>
+    </div>
+    @if (canSave) {
+      <button type="button" class="pe__btn pe__btn--primary" [disabled]="saving() || loading()" (click)="save()">
+        {{ saving() ? 'Kaydediliyor…' : 'Kaydet' }}
+      </button>
+    }
+  </header>
+
+  @if (error()) {
+    <p class="pe__error" role="alert">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="pe__muted">Yükleniyor…</p>
+  } @else {
+    <form class="pe__form" [formGroup]="form" (ngSubmit)="save()">
+      <section class="pe__panel">
+        <h3 class="pe__panel-title">Temel bilgiler</h3>
+        <div class="pe__grid">
+          <label class="pe__field pe__field--wide">
+            <span>Ad</span>
+            <input formControlName="name" />
+          </label>
+          <label class="pe__field">
+            <span>Slug</span>
+            <input formControlName="slug" />
+          </label>
+          <label class="pe__field pe__field--wide">
+            <span>Kısa açıklama</span>
+            <input formControlName="shortDescription" />
+          </label>
+          <label class="pe__field pe__field--wide">
+            <span>Açıklama</span>
+            <textarea formControlName="description" rows="4"></textarea>
+          </label>
+          <label class="pe__field">
+            <span>Kategori</span>
+            <select formControlName="categoryId">
+              <option value="">Seçin</option>
+              @for (c of categories(); track c.id) {
+                <option [value]="c.id">{{ c.name }}@if (!c.isActive) { (pasif)}</option>
+              }
+            </select>
+          </label>
+          <label class="pe__check">
+            <input type="checkbox" formControlName="isActive" />
+            <span>Aktif / yayınlı</span>
+          </label>
+          <label class="pe__check">
+            <input type="checkbox" formControlName="isFeatured" />
+            <span>Öne çıkan</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="pe__panel">
+        <h3 class="pe__panel-title">Uygulama alanları</h3>
+        <div class="pe__checks">
+          @for (area of areas(); track area.id) {
+            <label class="pe__check">
+              <input
+                type="checkbox"
+                [checked]="isAreaSelected(area.id)"
+                (change)="toggleArea(area.id, $any($event.target).checked)"
+              />
+              <span>{{ area.name }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      <section class="pe__panel">
+        <div class="pe__panel-head">
+          <h3 class="pe__panel-title">Varyantlar</h3>
+          <button type="button" class="pe__btn" (click)="addVariant()">Varyant ekle</button>
+        </div>
+        <div formArrayName="variants" class="pe__stack">
+          @for (ctrl of variants.controls; track $index; let i = $index) {
+            <div class="pe__row" [formGroupName]="i">
+              <label class="pe__field">
+                <span>SKU</span>
+                <input formControlName="sku" />
+              </label>
+              <label class="pe__field">
+                <span>Watt</span>
+                <input type="number" formControlName="watt" />
+              </label>
+              <label class="pe__field">
+                <span>Lumen</span>
+                <input type="number" formControlName="lumen" />
+              </label>
+              <label class="pe__field">
+                <span>Kelvin</span>
+                <input type="number" formControlName="kelvin" />
+              </label>
+              <label class="pe__field">
+                <span>Renk</span>
+                <input formControlName="color" />
+              </label>
+              <label class="pe__field">
+                <span>Ölçüler</span>
+                <input formControlName="dimensions" />
+              </label>
+              <label class="pe__field">
+                <span>Fiyat</span>
+                <input type="number" formControlName="price" min="0" step="0.01" />
+              </label>
+              <label class="pe__field">
+                <span>Stok</span>
+                <input type="number" formControlName="stock" min="0" />
+              </label>
+              <label class="pe__check">
+                <input type="checkbox" formControlName="isActive" />
+                <span>Aktif</span>
+              </label>
+              <button type="button" class="pe__link-btn" (click)="removeVariant(i)" [disabled]="variants.length <= 1">
+                Kaldır
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="pe__panel">
+        <div class="pe__panel-head">
+          <h3 class="pe__panel-title">Özellikler</h3>
+          <button type="button" class="pe__btn" (click)="addSpecification()">Özellik ekle</button>
+        </div>
+        <div formArrayName="specifications" class="pe__stack">
+          @for (ctrl of specifications.controls; track $index; let i = $index) {
+            <div class="pe__row pe__row--spec" [formGroupName]="i">
+              <label class="pe__field">
+                <span>Ad</span>
+                <input formControlName="name" placeholder="IP" />
+              </label>
+              <label class="pe__field">
+                <span>Değer</span>
+                <input formControlName="value" placeholder="IP65" />
+              </label>
+              <label class="pe__field">
+                <span>Birim</span>
+                <input formControlName="unit" />
+              </label>
+              <button type="button" class="pe__link-btn" (click)="removeSpecification(i)">Kaldır</button>
+            </div>
+          } @empty {
+            <p class="pe__muted">Henüz özellik yok.</p>
+          }
+        </div>
+      </section>
+
+      <section class="pe__panel">
+        <h3 class="pe__panel-title">Medya (salt okunur — Phase 9C)</h3>
+        @if (existingMedia().length === 0) {
+          <p class="pe__muted">Kayıtlı medya yok. Yükleme Phase 9C’de eklenecek; storefront mevcut placeholder davranışını kullanır.</p>
+        } @else {
+          <ul class="pe__media">
+            @for (m of existingMedia(); track m.id) {
+              <li>
+                <strong>{{ m.type }}</strong>
+                <span>{{ m.path }}</span>
+                @if (m.altText) {
+                  <span class="pe__muted">{{ m.altText }}</span>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </form>
+  }
+</section>

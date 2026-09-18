@@ -25,7 +25,7 @@ export class AdminDashboardComponent {
     {
       title: 'Catalog Management',
       description:
-        'Ürünler, kategoriler ve uygulama alanlarını yönetin. CRUD ekranları Phase 9B’de tamamlanacak.',
+        'Ürünler, kategoriler ve uygulama alanlarını yönetin.',
       path: '/admin/catalog/products',
       cta: 'Kataloğa git',
       permissions: [Permission.ProductView],

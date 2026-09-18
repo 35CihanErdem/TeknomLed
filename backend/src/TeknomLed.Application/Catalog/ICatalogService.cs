@@ -15,9 +15,17 @@ public interface ICatalogService
 
 public interface IAdminCatalogService
 {
-    Task<ProductDetailDto> CreateProductAsync(CreateProductRequest request, CancellationToken ct = default);
-    Task<ProductDetailDto> UpdateProductAsync(Guid id, UpdateProductRequest request, CancellationToken ct = default);
+    Task<PagedResult<AdminProductListItemDto>> GetProductsAsync(AdminProductQuery query, CancellationToken ct = default);
+    Task<AdminProductDetailDto> GetProductByIdAsync(Guid id, CancellationToken ct = default);
+    Task<AdminProductDetailDto> CreateProductAsync(CreateProductRequest request, CancellationToken ct = default);
+    Task<AdminProductDetailDto> UpdateProductAsync(Guid id, UpdateProductRequest request, CancellationToken ct = default);
     Task DeactivateProductAsync(Guid id, CancellationToken ct = default);
-    Task<CategoryDto> CreateCategoryAsync(CreateCategoryRequest request, CancellationToken ct = default);
-    Task<CategoryDto> UpdateCategoryAsync(Guid id, UpdateCategoryRequest request, CancellationToken ct = default);
+
+    Task<IReadOnlyList<AdminCategoryDto>> GetCategoriesAsync(CancellationToken ct = default);
+    Task<AdminCategoryDto> CreateCategoryAsync(CreateCategoryRequest request, CancellationToken ct = default);
+    Task<AdminCategoryDto> UpdateCategoryAsync(Guid id, UpdateCategoryRequest request, CancellationToken ct = default);
+
+    Task<IReadOnlyList<AdminApplicationAreaDto>> GetApplicationAreasAsync(CancellationToken ct = default);
+    Task<AdminApplicationAreaDto> CreateApplicationAreaAsync(CreateApplicationAreaRequest request, CancellationToken ct = default);
+    Task<AdminApplicationAreaDto> UpdateApplicationAreaAsync(Guid id, UpdateApplicationAreaRequest request, CancellationToken ct = default);
 }

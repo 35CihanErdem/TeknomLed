@@ -5,6 +5,7 @@ import {
   permissionGuard,
 } from '../../core/auth/permission.guard';
 import { Permission } from '../../core/auth/permissions';
+import { unsavedChangesGuard } from '../../core/admin/unsaved-changes.guard';
 import { AdminLayoutComponent } from './layout/admin-layout.component';
 
 export const ADMIN_ROUTES: Routes = [
@@ -47,6 +48,7 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'catalog/products/new',
         canActivate: [permissionGuard(Permission.ProductCreate)],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./catalog/admin-product-editor-page.component').then(
             (m) => m.AdminProductEditorPageComponent
@@ -56,6 +58,7 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'catalog/products/:id',
         canActivate: [permissionGuard(Permission.ProductView)],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./catalog/admin-product-editor-page.component').then(
             (m) => m.AdminProductEditorPageComponent

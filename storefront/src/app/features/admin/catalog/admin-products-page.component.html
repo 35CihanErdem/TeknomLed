@@ -1,0 +1,104 @@
+<section class="ap">
+  <header class="ap__head">
+    <div>
+      <h2 class="ap__title">Products</h2>
+      <p class="ap__lead">PostgreSQL kataloğu — arama, filtre ve sayfalama sunucu tarafında.</p>
+    </div>
+    @if (canCreate) {
+      <a class="ap__btn ap__btn--primary" routerLink="/admin/catalog/products/new">Yeni ürün</a>
+    }
+  </header>
+
+  <form class="ap__filters" (ngSubmit)="applyFilters()">
+    <label class="ap__field">
+      <span>Ara</span>
+      <input [(ngModel)]="search" name="search" placeholder="Ad veya slug" />
+    </label>
+    <label class="ap__field">
+      <span>Kategori</span>
+      <select [(ngModel)]="category" name="category">
+        <option value="">Tümü</option>
+        @for (c of categories(); track c.id) {
+          <option [value]="c.slug">{{ c.name }}</option>
+        }
+      </select>
+    </label>
+    <label class="ap__field">
+      <span>Durum</span>
+      <select [(ngModel)]="status" name="status">
+        <option value="">Tümü</option>
+        <option value="true">Aktif</option>
+        <option value="false">Pasif / taslak</option>
+      </select>
+    </label>
+    <button type="submit" class="ap__btn">Filtrele</button>
+  </form>
+
+  @if (error()) {
+    <p class="ap__error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="ap__table-wrap">
+    <table class="ap__table">
+      <thead>
+        <tr>
+          <th>Ürün</th>
+          <th>Kategori</th>
+          <th>Varyant</th>
+          <th>Durum</th>
+          <th>Güncellendi</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="6" class="ap__muted">Yükleniyor…</td>
+          </tr>
+        } @else if (items().length === 0) {
+          <tr>
+            <td colspan="6" class="ap__muted">Ürün bulunamadı.</td>
+          </tr>
+        } @else {
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>
+                <div class="ap__name">{{ item.name }}</div>
+                <div class="ap__slug">{{ item.slug }}</div>
+              </td>
+              <td>{{ item.categoryName }}</td>
+              <td>{{ item.variantCount }}</td>
+              <td>
+                <span class="ap__badge" [class.ap__badge--on]="item.isActive" [class.ap__badge--off]="!item.isActive">
+                  {{ item.isActive ? 'Aktif' : 'Pasif' }}
+                </span>
+              </td>
+              <td>{{ item.updatedAtUtc | date: 'dd.MM.yyyy HH:mm' }}</td>
+              <td class="ap__actions">
+                <a [routerLink]="['/admin/catalog/products', item.id]">Düzenle</a>
+                @if (canUpdate && item.isActive) {
+                  <button type="button" class="ap__link-btn" (click)="deactivate(item)">Pasifleştir</button>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="ap__pager">
+    <span class="ap__muted">{{ totalItems() }} ürün · sayfa {{ page }} / {{ totalPages() || 1 }}</span>
+    <div class="ap__pager-btns">
+      <button type="button" class="ap__btn" [disabled]="page <= 1" (click)="goPage(-1)">Önceki</button>
+      <button
+        type="button"
+        class="ap__btn"
+        [disabled]="totalPages() === 0 || page >= totalPages()"
+        (click)="goPage(1)"
+      >
+        Sonraki
+      </button>
+    </div>
+  </footer>
+</section>

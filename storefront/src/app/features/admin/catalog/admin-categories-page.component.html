@@ -1,0 +1,81 @@
+<section class="ac">
+  <header class="ac__head">
+    <div>
+      <h2 class="ac__title">Categories</h2>
+      <p class="ac__lead">Kategori oluşturma, düzenleme ve aktif/pasif yönetimi.</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="ac__error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="ac__layout">
+    <form class="ac__form" [formGroup]="form" (ngSubmit)="save()">
+      <h3 class="ac__form-title">{{ editingId() ? 'Kategori düzenle' : 'Yeni kategori' }}</h3>
+      <label class="ac__field">
+        <span>Ad</span>
+        <input formControlName="name" />
+      </label>
+      <label class="ac__field">
+        <span>Slug</span>
+        <input formControlName="slug" />
+      </label>
+      <label class="ac__field">
+        <span>Açıklama</span>
+        <textarea formControlName="description" rows="3"></textarea>
+      </label>
+      <label class="ac__field">
+        <span>Sıra</span>
+        <input type="number" formControlName="sortOrder" />
+      </label>
+      <label class="ac__check">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Aktif</span>
+      </label>
+      <div class="ac__form-actions">
+        <button type="submit" class="ac__btn ac__btn--primary" [disabled]="!(canCreate || canUpdate)">
+          Kaydet
+        </button>
+        @if (editingId()) {
+          <button type="button" class="ac__btn" (click)="startCreate()">İptal</button>
+        }
+      </div>
+    </form>
+
+    <div class="ac__table-wrap">
+      <table class="ac__table">
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Slug</th>
+            <th>Sıra</th>
+            <th>Durum</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr><td colspan="5" class="ac__muted">Yükleniyor…</td></tr>
+          } @else {
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.slug }}</td>
+                <td>{{ item.sortOrder }}</td>
+                <td>{{ item.isActive ? 'Aktif' : 'Pasif' }}</td>
+                <td>
+                  @if (canUpdate) {
+                    <button type="button" class="ac__link" (click)="startEdit(item)">Düzenle</button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="ac__muted">Kategori yok.</td></tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

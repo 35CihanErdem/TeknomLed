@@ -4,6 +4,76 @@ public sealed record CategoryDto(Guid Id, string Slug, string Name, string? Desc
 
 public sealed record ApplicationAreaDto(Guid Id, string Slug, string Name, int SortOrder);
 
+public sealed record AdminCategoryDto(
+    Guid Id,
+    string Slug,
+    string Name,
+    string? Description,
+    int SortOrder,
+    bool IsActive,
+    DateTimeOffset UpdatedAtUtc);
+
+public sealed record AdminApplicationAreaDto(
+    Guid Id,
+    string Slug,
+    string Name,
+    int SortOrder,
+    bool IsActive);
+
+public sealed record AdminProductListItemDto(
+    Guid Id,
+    string Slug,
+    string Name,
+    string CategoryName,
+    string CategorySlug,
+    int VariantCount,
+    bool IsActive,
+    bool IsFeatured,
+    DateTimeOffset UpdatedAtUtc);
+
+public sealed record AdminVariantDto(
+    Guid Id,
+    string Sku,
+    int? Watt,
+    int? Lumen,
+    int? Kelvin,
+    string? Color,
+    string? Dimensions,
+    decimal Price,
+    int Stock,
+    bool IsActive);
+
+public sealed record AdminProductDetailDto(
+    Guid Id,
+    string Slug,
+    string Name,
+    string ShortDescription,
+    string? Description,
+    Guid CategoryId,
+    CategoryDto Category,
+    IReadOnlyList<Guid> ApplicationAreaIds,
+    IReadOnlyList<string> ApplicationAreaNames,
+    IReadOnlyList<ProductMediaDto> Media,
+    IReadOnlyList<ProductSpecificationDto> Specifications,
+    IReadOnlyList<AdminVariantDto> Variants,
+    bool IsFeatured,
+    bool IsActive,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc);
+
+public sealed class AdminProductQuery
+{
+    public string? Search { get; set; }
+    public string? Category { get; set; }
+    public bool? IsActive { get; set; }
+    public string? Sort { get; set; }
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 24;
+}
+
+public sealed record CreateApplicationAreaRequest(string Slug, string Name, int SortOrder, bool IsActive = true);
+public sealed record UpdateApplicationAreaRequest(string Slug, string Name, int SortOrder, bool IsActive);
+
 public sealed record ProductMediaDto(Guid Id, string Type, string Url, string? AltText, int SortOrder);
 
 public sealed record ProductVariantDto(

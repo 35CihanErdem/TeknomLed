@@ -1,0 +1,77 @@
+<section class="aa">
+  <header class="aa__head">
+    <div>
+      <h2 class="aa__title">Application Areas</h2>
+      <p class="aa__lead">Uygulama alanı oluşturma, düzenleme ve aktif/pasif yönetimi.</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="aa__error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="aa__layout">
+    <form class="aa__form" [formGroup]="form" (ngSubmit)="save()">
+      <h3 class="aa__form-title">{{ editingId() ? 'Alan düzenle' : 'Yeni alan' }}</h3>
+      <label class="aa__field">
+        <span>Ad</span>
+        <input formControlName="name" />
+      </label>
+      <label class="aa__field">
+        <span>Slug</span>
+        <input formControlName="slug" />
+      </label>
+      <label class="aa__field">
+        <span>Sıra</span>
+        <input type="number" formControlName="sortOrder" />
+      </label>
+      <label class="aa__check">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Aktif</span>
+      </label>
+      <div class="aa__form-actions">
+        <button type="submit" class="aa__btn aa__btn--primary" [disabled]="!(canCreate || canUpdate)">
+          Kaydet
+        </button>
+        @if (editingId()) {
+          <button type="button" class="aa__btn" (click)="startCreate()">İptal</button>
+        }
+      </div>
+    </form>
+
+    <div class="aa__table-wrap">
+      <table class="aa__table">
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Slug</th>
+            <th>Sıra</th>
+            <th>Durum</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr><td colspan="5" class="aa__muted">Yükleniyor…</td></tr>
+          } @else {
+            @for (item of items(); track item.id) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.slug }}</td>
+                <td>{{ item.sortOrder }}</td>
+                <td>{{ item.isActive ? 'Aktif' : 'Pasif' }}</td>
+                <td>
+                  @if (canUpdate) {
+                    <button type="button" class="aa__link" (click)="startEdit(item)">Düzenle</button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="aa__muted">Uygulama alanı yok.</td></tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

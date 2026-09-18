@@ -49,59 +49,80 @@ Status: Complete
 ## Phase 9A — Admin Panel Foundation + Access Control
 Status: Complete
 
-Current Phase: PHASE 9A — ADMIN FOUNDATION
+### Admin shell
+- `/admin` dashboard, sidebar, permission-gated nav
+- `permissionGuard` / `adminAreaGuard` / access-denied
+- Users / Access pages remain placeholders until Phase 9D
 
-### Admin routes (lazy)
-- `/admin` — dashboard (permission-gated sections)
-- `/admin/catalog/products` | `.../new` | `.../:id`
-- `/admin/catalog/categories`
-- `/admin/catalog/application-areas`
-- `/admin/users`
-- `/admin/access/roles` | `/admin/access/permissions`
-- `/admin/access-denied`
+## Phase 9B — Catalog Management
+Status: Complete
 
-### Permission strategy (UX only; API authoritative)
-- `AuthService.can` / `canAny` / `canAll`
-- `permissionGuard` / `anyPermissionGuard` / `adminAreaGuard`
-- Sidebar + dashboard sections filtered by permissions
-- Unauthenticated → `/account/login`
-- Authenticated without permission → `/admin/access-denied`
+Current Phase: PHASE 9B — CATALOG MANAGEMENT
 
-### Phase 9A UI scope
-- Real admin shell (sidebar / header / content)
-- No fake KPIs, charts, users, orders, or activity
-- Catalog/Users/Access pages are intentional placeholders until 9B/9D
+### Admin API endpoints
+| Method | Path | Permission |
+|--------|------|------------|
+| GET | `/api/admin/products` | `PRODUCT_VIEW` |
+| GET | `/api/admin/products/{id}` | `PRODUCT_VIEW` |
+| POST | `/api/admin/products` | `PRODUCT_CREATE` |
+| PUT | `/api/admin/products/{id}` | `PRODUCT_UPDATE` |
+| DELETE | `/api/admin/products/{id}` | `PRODUCT_UPDATE` (soft deactivate) |
+| GET | `/api/admin/categories` | `PRODUCT_VIEW` |
+| POST | `/api/admin/categories` | `PRODUCT_CREATE` |
+| PUT | `/api/admin/categories/{id}` | `PRODUCT_UPDATE` |
+| GET | `/api/admin/application-areas` | `PRODUCT_VIEW` |
+| POST | `/api/admin/application-areas` | `PRODUCT_CREATE` |
+| PUT | `/api/admin/application-areas/{id}` | `PRODUCT_UPDATE` |
 
-### Backend gaps → Phase 9B (catalog CRUD UI)
-Existing admin catalog API:
-- `POST/PUT/DELETE /api/admin/products` (create/update/deactivate)
-- `POST/PUT /api/admin/categories`
-Missing for full admin catalog UI:
-- Admin product list / get-by-id (incl. inactive/drafts)
-- Admin category list (incl. inactive)
-- Application-area admin create/update/deactivate
-- Standalone variant / specification / media admin endpoints (today only nested in product create/update payload)
-- Optional: category soft-deactivate endpoint
+Admin product list supports server-side `search`, `category`, `isActive`, `sort`, `page`, `pageSize`. Drafts/inactive are included.
+
+### Admin screens
+- `/admin/catalog/products` — real list (search/filter/pagination)
+- `/admin/catalog/products/new` | `/:id` — reactive product editor (variants, specs, application areas)
+- `/admin/catalog/categories` — list/create/edit/active
+- `/admin/catalog/application-areas` — list/create/edit/active
+- Unsaved-changes guard on product editor
+
+### Publication behavior
+- `Product.IsActive = true` → visible on public `GET /api/products`, detail, related
+- `Product.IsActive = false` → admin-only; excluded from public catalog APIs
+- No second publication model
+
+### Validation / integrity (backend authoritative)
+- Unique product / category / application-area slugs (409)
+- Unique SKU (409)
+- Invalid category / application-area IDs rejected
+- Price ≥ 0, stock ≥ 0; at least one variant
+- Category cannot be deactivated while active products reference it (409)
+- Application areas unique by slug or name
+
+### Permissions
+- Angular checks = UX only
+- ASP.NET `RequirePermission` = authoritative
+
+### Media boundary (Phase 9C)
+- Existing `ProductMedia` metadata shown read-only in editor
+- No binary upload, no Base64, no object storage, no invented image URLs
+- Empty media on update preserves existing rows
+
+### Angular architecture
+- `AdminCatalogService` + admin DTOs (separate from public `ProductCatalogService`)
+
+### Tests
+- `AdminCatalogServiceTests`: inactive visibility, create, duplicate slug, invalid category, variant validation, application-area persistence, update/activate, deactivate, category/area rules
+- Existing `CatalogServiceTests` retained
 
 ### Backend gaps → Phase 9D (users / access)
-Existing:
-- Auth: register/login/google/refresh/logout/me/profile
-- Roles/permissions seeded in DB; JWT includes permission claims
-Missing:
-- User list / user detail
-- Assign/remove roles on a user
-- Role list / permission list
-- Role↔permission management APIs
+- User list / detail, role assignment, role↔permission management APIs + UI
 
 ### Still deferred
-- Phase 9B catalog CRUD screens
+- Phase 9C media upload / object storage
 - Phase 9D user/access APIs + UI
 - Orders / Payment / Shipping
-- Object storage upload
 - WhatsApp / cart merge / server-side cart
 
-### Build / test (Phase 9A)
+### Build / test (Phase 9B)
 - `npm run build` — pass
-- `dotnet test` — 20 tests pass
+- `dotnet test` — pass (incl. AdminCatalogServiceTests)
 
 See also: `GOOGLE_AUTH_SETUP.md`, `backend/README.md`
