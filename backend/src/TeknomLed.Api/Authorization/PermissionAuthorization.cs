@@ -5,7 +5,8 @@ namespace TeknomLed.Api.Authorization;
 
 public static class PermissionNames
 {
-    // Mirror domain names for attribute convenience without forcing Api→Domain coupling everywhere.
+    public const string ProductView = "PRODUCT_VIEW";
+    public const string ProductCreate = "PRODUCT_CREATE";
     public const string ProductUpdate = "PRODUCT_UPDATE";
     public const string UserRoleUpdate = "USER_ROLE_UPDATE";
 }

@@ -1,4 +1,12 @@
-import { Component, computed, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ContainerComponent } from '../../shared/components/container/container.component';
 import { ProductsHeaderComponent } from './components/products-header/products-header.component';
 import { CategoryNavigationComponent } from './components/category-navigation/category-navigation.component';
@@ -6,26 +14,26 @@ import { ProductToolbarComponent } from './components/product-toolbar/product-to
 import { ProductFilterComponent } from './components/product-filter/product-filter.component';
 import { ProductGridComponent } from './components/product-grid/product-grid.component';
 import {
-  APPLICATION_AREAS,
   FILTER_IP_CLASSES,
   FILTER_KELVINS,
-  MOCK_PRODUCTS,
-  PRODUCT_CATEGORIES,
 } from './data/products.mock';
 import {
   ActiveFilterChip,
   PowerRangeId,
   PriceRangeId,
+  Product,
+  ProductCategory,
   ProductFilterState,
   ProductSortOption,
 } from './models/product.model';
 import {
   buildActiveFilterChips,
   createEmptyFilters,
-  filterProducts,
-  sortProducts,
   toggleListValue,
 } from './utils/product-catalog.utils';
+import { ProductCatalogService } from '../../core/catalog/product-catalog.service';
+import { filtersToQuery } from '../../core/catalog/catalog.models';
+import { Subject, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-products',
@@ -41,9 +49,13 @@ import {
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',
 })
-export class ProductsComponent {
-  readonly categories = PRODUCT_CATEGORIES;
-  readonly applicationAreas = APPLICATION_AREAS;
+export class ProductsComponent implements OnInit {
+  private readonly catalog = inject(ProductCatalogService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly reload$ = new Subject<void>();
+
+  readonly categories = signal<ProductCategory[]>([]);
+  readonly applicationAreas = signal<string[]>([]);
   readonly kelvins = FILTER_KELVINS;
   readonly ipClasses = FILTER_IP_CLASSES;
 
@@ -51,29 +63,71 @@ export class ProductsComponent {
   readonly sort = signal<ProductSortOption>('recommended');
   readonly filterOpen = signal(false);
 
-  readonly filteredProducts = computed(() =>
-    filterProducts(MOCK_PRODUCTS, this.filters())
-  );
-
-  readonly sortedProducts = computed(() =>
-    sortProducts(this.filteredProducts(), this.sort())
-  );
-
-  readonly resultCount = computed(() => this.sortedProducts().length);
+  readonly products = signal<Product[]>([]);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly resultCount = signal(0);
 
   readonly activeChips = computed(() =>
-    buildActiveFilterChips(this.filters(), this.categories)
+    buildActiveFilterChips(this.filters(), this.categories())
   );
+
+  ngOnInit(): void {
+    this.catalog
+      .getCategories()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (categories) => this.categories.set(categories),
+      });
+
+    this.catalog
+      .getApplicationAreas()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (areas) => this.applicationAreas.set(areas.map((a) => a.name)),
+      });
+
+    this.reload$
+      .pipe(
+        tap(() => {
+          this.loading.set(true);
+          this.error.set(null);
+        }),
+        switchMap(() =>
+          this.catalog.getProducts(
+            filtersToQuery(this.filters(), this.sort(), 1, 48)
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (result) => {
+          this.products.set(result.products);
+          this.resultCount.set(result.totalItems);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.products.set([]);
+          this.resultCount.set(0);
+          this.loading.set(false);
+          this.error.set('Ürünler yüklenemedi. Lütfen tekrar deneyin.');
+        },
+      });
+
+    this.reload$.next();
+  }
 
   onCategoryChange(slug: string | null): void {
     this.filters.update((current) => ({
       ...current,
       categorySlug: slug,
     }));
+    this.reload$.next();
   }
 
   onSortChange(sort: ProductSortOption): void {
     this.sort.set(sort);
+    this.reload$.next();
   }
 
   toggleFilterPanel(): void {
@@ -89,6 +143,7 @@ export class ProductsComponent {
       ...current,
       applicationAreas: toggleListValue(current.applicationAreas, area),
     }));
+    this.reload$.next();
   }
 
   toggleKelvin(kelvin: number): void {
@@ -96,6 +151,7 @@ export class ProductsComponent {
       ...current,
       kelvins: toggleListValue(current.kelvins, kelvin),
     }));
+    this.reload$.next();
   }
 
   togglePower(range: PowerRangeId): void {
@@ -103,6 +159,7 @@ export class ProductsComponent {
       ...current,
       powerRanges: toggleListValue(current.powerRanges, range),
     }));
+    this.reload$.next();
   }
 
   toggleIp(ip: string): void {
@@ -110,6 +167,7 @@ export class ProductsComponent {
       ...current,
       ipClasses: toggleListValue(current.ipClasses, ip),
     }));
+    this.reload$.next();
   }
 
   togglePrice(range: PriceRangeId): void {
@@ -117,10 +175,12 @@ export class ProductsComponent {
       ...current,
       priceRanges: toggleListValue(current.priceRanges, range),
     }));
+    this.reload$.next();
   }
 
   clearFilters(): void {
     this.filters.set(createEmptyFilters());
+    this.reload$.next();
   }
 
   removeChip(chip: ActiveFilterChip): void {
@@ -172,5 +232,6 @@ export class ProductsComponent {
 
       return current;
     });
+    this.reload$.next();
   }
 }

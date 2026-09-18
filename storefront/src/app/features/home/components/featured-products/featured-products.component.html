@@ -10,7 +10,7 @@
     </header>
 
     <ul class="products__grid">
-      @for (product of products; track product.slug) {
+      @for (product of products(); track product.slug) {
         <li>
           <a [routerLink]="['/products', product.slug]" class="products__item">
             <div class="products__media">

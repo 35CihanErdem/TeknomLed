@@ -1,121 +1,131 @@
-@if (product(); as product) {
-  <article class="detail">
-    <app-container [wide]="true">
-      <nav class="detail__breadcrumb" aria-label="Sayfa konumu">
-        <a routerLink="/">Ana Sayfa</a>
-        <span aria-hidden="true">/</span>
-        <a routerLink="/products">Ürünler</a>
-        <span aria-hidden="true">/</span>
-        <a routerLink="/products">{{ product.category.name }}</a>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">{{ product.name }}</span>
-      </nav>
-
-      <div class="detail__hero">
-        <div class="detail__gallery">
-          <app-product-gallery
-            [images]="galleryImages()"
-            [activeIndex]="galleryIndex()"
-            (activeIndexChange)="onGalleryIndexChange($event)"
-          />
-        </div>
-
-        <div class="detail__info">
-          <app-product-info
-            [product]="product"
-            [selection]="selection()"
-            [selectedVariant]="selectedVariant()"
-            [addedFeedback]="addedFeedback()"
-            (selectionChange)="onSelectionChange($event)"
-            (addToCart)="onAddToCart($event)"
-          />
-        </div>
-      </div>
-
-      <app-product-tech-summary
-        [product]="product"
-        [variant]="selectedVariant()"
-      />
-    </app-container>
-
-    <section class="detail__light" aria-label="Işık deneyimi">
-      <app-container [wide]="true">
-        <header class="detail__light-header">
-          <h2 class="detail__light-title">
-            <span>Işığın etkisini</span>
-            <span>deneyimleyin.</span>
-          </h2>
-          <p class="detail__light-text">
-            Aydınlatmanın mekâna kattığı farkı, hizalı uygulama görselleriyle
-            keşfedin.
-          </p>
-        </header>
-
-        @if (lightPair(); as pair) {
-          <app-light-comparison
-            [lightOffImage]="pair.lightOffImage"
-            [lightOnImage]="pair.lightOnImage"
-            [imageAlt]="product.name + ' ışık karşılaştırması'"
-            [embedded]="true"
-            beforeLabel="IŞIK KAPALI"
-            afterLabel="IŞIK AÇIK"
-          />
-        } @else {
-          <div class="detail__light-reserved">
-            <p class="detail__light-reserved-label">Işık deneyimi</p>
-            <p class="detail__light-reserved-text">
-              Bu ürünün uygulama görselleri hazırlanıyor.
-            </p>
-          </div>
-        }
-      </app-container>
-    </section>
-
-    <app-container [wide]="true">
-      <app-product-specifications
-        [product]="product"
-        [variant]="selectedVariant()"
-      />
-
-      <section class="detail__areas" aria-label="Uygulama alanları">
-        <h2 class="detail__areas-title">Uygulama alanları</h2>
-        <ul class="detail__areas-list">
-          @for (area of product.applicationAreas; track area) {
-            <li>{{ area }}</li>
-          }
-        </ul>
-      </section>
-
-      @if (product.documents.length > 0) {
-        <section class="detail__docs" aria-label="Dokümanlar">
-          <h2 class="detail__docs-title">Dokümanlar</h2>
-          <ul class="detail__docs-list">
-            @for (doc of product.documents; track doc.id) {
-              <li>
-                <a [href]="doc.url" target="_blank" rel="noopener noreferrer">
-                  {{ doc.title }}
-                </a>
-              </li>
-            }
-          </ul>
-        </section>
-      }
-    </app-container>
-
-    @if (applicationImages().length > 0) {
-      <app-product-application [images]="applicationImages()" />
-    }
-
-    <app-related-products [products]="relatedProducts()" />
-  </article>
-} @else {
+@if (loading()) {
   <section class="detail-missing">
     <app-container>
-      <h1 class="detail-missing__title">Ürün bulunamadı.</h1>
+      <h1 class="detail-missing__title">Ürün yükleniyor…</h1>
+    </app-container>
+  </section>
+} @else if (!product()) {
+  <section class="detail-missing">
+    <app-container>
+      <h1 class="detail-missing__title">
+        {{ error() ?? 'Ürün bulunamadı.' }}
+      </h1>
       <p class="detail-missing__text">
         Aradığınız ürün mevcut değil veya bağlantı geçersiz olabilir.
       </p>
       <a routerLink="/products" class="detail-missing__action">Ürünlere Dön</a>
     </app-container>
   </section>
+} @else {
+  @if (product(); as product) {
+    <article class="detail">
+      <app-container [wide]="true">
+        <nav class="detail__breadcrumb" aria-label="Sayfa konumu">
+          <a routerLink="/">Ana Sayfa</a>
+          <span aria-hidden="true">/</span>
+          <a routerLink="/products">Ürünler</a>
+          <span aria-hidden="true">/</span>
+          <a routerLink="/products">{{ product.category.name }}</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{{ product.name }}</span>
+        </nav>
+
+        <div class="detail__hero">
+          <div class="detail__gallery">
+            <app-product-gallery
+              [images]="galleryImages()"
+              [activeIndex]="galleryIndex()"
+              (activeIndexChange)="onGalleryIndexChange($event)"
+            />
+          </div>
+
+          <div class="detail__info">
+            <app-product-info
+              [product]="product"
+              [selection]="selection()"
+              [selectedVariant]="selectedVariant()"
+              [addedFeedback]="addedFeedback()"
+              (selectionChange)="onSelectionChange($event)"
+              (addToCart)="onAddToCart($event)"
+            />
+          </div>
+        </div>
+
+        <app-product-tech-summary
+          [product]="product"
+          [variant]="selectedVariant()"
+        />
+      </app-container>
+
+      <section class="detail__light" aria-label="Işık deneyimi">
+        <app-container [wide]="true">
+          <header class="detail__light-header">
+            <h2 class="detail__light-title">
+              <span>Işığın etkisini</span>
+              <span>deneyimleyin.</span>
+            </h2>
+            <p class="detail__light-text">
+              Aydınlatmanın mekâna kattığı farkı, hizalı uygulama görselleriyle
+              keşfedin.
+            </p>
+          </header>
+
+          @if (lightPair(); as pair) {
+            <app-light-comparison
+              [lightOffImage]="pair.lightOffImage"
+              [lightOnImage]="pair.lightOnImage"
+              [imageAlt]="product.name + ' ışık karşılaştırması'"
+              [embedded]="true"
+              beforeLabel="IŞIK KAPALI"
+              afterLabel="IŞIK AÇIK"
+            />
+          } @else {
+            <div class="detail__light-reserved">
+              <p class="detail__light-reserved-label">Işık deneyimi</p>
+              <p class="detail__light-reserved-text">
+                Bu ürünün uygulama görselleri hazırlanıyor.
+              </p>
+            </div>
+          }
+        </app-container>
+      </section>
+
+      <app-container [wide]="true">
+        <app-product-specifications
+          [product]="product"
+          [variant]="selectedVariant()"
+        />
+
+        <section class="detail__areas" aria-label="Uygulama alanları">
+          <h2 class="detail__areas-title">Uygulama alanları</h2>
+          <ul class="detail__areas-list">
+            @for (area of product.applicationAreas; track area) {
+              <li>{{ area }}</li>
+            }
+          </ul>
+        </section>
+
+        @if (product.documents.length > 0) {
+          <section class="detail__docs" aria-label="Dokümanlar">
+            <h2 class="detail__docs-title">Dokümanlar</h2>
+            <ul class="detail__docs-list">
+              @for (doc of product.documents; track doc.id) {
+                <li>
+                  <a [href]="doc.url" target="_blank" rel="noopener noreferrer">
+                    {{ doc.title }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </app-container>
+
+      @if (applicationImages().length > 0) {
+        <app-product-application [images]="applicationImages()" />
+      }
+
+      <app-related-products [products]="relatedProducts()" />
+    </article>
+  }
 }

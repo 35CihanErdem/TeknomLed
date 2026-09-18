@@ -1,8 +1,8 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { MOCK_PRODUCTS } from '../../features/products/data/products.mock';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Product, ProductVariant } from '../../features/products/models/product.model';
 import { getPrimaryImage } from '../../features/products/utils/product-catalog.utils';
 import { CartItem, DetailedCartItem } from '../../features/cart/models/cart.model';
+import { ProductCatalogService } from '../catalog/product-catalog.service';
 
 const STORAGE_KEY = 'teknomled.storefront.cart.v1';
 
@@ -19,17 +19,6 @@ function isCartItem(value: unknown): value is CartItem {
   );
 }
 
-function findProduct(productId: string): Product | undefined {
-  return MOCK_PRODUCTS.find((product) => product.id === productId);
-}
-
-function findVariant(
-  product: Product,
-  variantId: string
-): ProductVariant | undefined {
-  return product.variants.find((variant) => variant.id === variantId);
-}
-
 function buildVariantSummary(variant: ProductVariant): string {
   const parts: string[] = [];
   if (variant.kelvin != null) {
@@ -44,54 +33,7 @@ function buildVariantSummary(variant: ProductVariant): string {
   return parts.join(' · ');
 }
 
-function sanitizeItems(items: CartItem[]): CartItem[] {
-  const cleaned: CartItem[] = [];
-
-  for (const item of items) {
-    if (!isCartItem(item)) {
-      continue;
-    }
-
-    const product = findProduct(item.productId);
-    if (!product) {
-      continue;
-    }
-
-    const variant = findVariant(product, item.variantId);
-    if (!variant || variant.stock <= 0) {
-      continue;
-    }
-
-    const quantity = Math.min(
-      Math.max(1, Math.floor(item.quantity)),
-      variant.stock
-    );
-
-    const existingIndex = cleaned.findIndex(
-      (entry) =>
-        entry.productId === item.productId && entry.variantId === item.variantId
-    );
-
-    if (existingIndex >= 0) {
-      const existing = cleaned[existingIndex];
-      cleaned[existingIndex] = {
-        ...existing,
-        quantity: Math.min(existing.quantity + quantity, variant.stock),
-      };
-      continue;
-    }
-
-    cleaned.push({
-      productId: item.productId,
-      variantId: item.variantId,
-      quantity,
-    });
-  }
-
-  return cleaned;
-}
-
-function readStoredCart(): CartItem[] {
+function readRawCart(): CartItem[] {
   if (typeof localStorage === 'undefined') {
     return [];
   }
@@ -105,26 +47,50 @@ function readStoredCart(): CartItem[] {
     if (!Array.isArray(parsed)) {
       return [];
     }
-    return sanitizeItems(parsed);
+    return parsed.filter(isCartItem).map((item) => ({
+      productId: item.productId,
+      variantId: item.variantId,
+      quantity: Math.max(1, Math.floor(item.quantity)),
+    }));
   } catch {
     return [];
   }
 }
 
+/**
+ * Cart identity stays in localStorage (productId + variantId + quantity).
+ * Display price/stock always resolve from ProductCatalogService (backend).
+ * Frontend is never the source of truth for order pricing.
+ */
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private readonly itemsSignal = signal<CartItem[]>(readStoredCart());
+  private readonly catalog = inject(ProductCatalogService);
+
+  private readonly itemsSignal = signal<CartItem[]>(readRawCart());
+  private readonly hydratedSignal = signal(false);
 
   readonly items = this.itemsSignal.asReadonly();
+  readonly hydrated = this.hydratedSignal.asReadonly();
 
-  readonly detailedItems = computed<DetailedCartItem[]>(() =>
-    this.itemsSignal()
+  readonly detailedItems = computed<DetailedCartItem[]>(() => {
+    // Depend on catalog cache updates.
+    this.catalog.cacheVersion();
+    return this.itemsSignal()
       .map((item) => this.toDetailedItem(item))
-      .filter((item): item is DetailedCartItem => item != null)
-  );
+      .filter((item): item is DetailedCartItem => item != null);
+  });
+
+  readonly staleCount = computed(() => {
+    this.catalog.cacheVersion();
+    if (!this.hydratedSignal()) {
+      return 0;
+    }
+    return this.itemsSignal().filter((item) => this.toDetailedItem(item) == null)
+      .length;
+  });
 
   readonly totalQuantity = computed(() =>
-    this.itemsSignal().reduce((sum, item) => sum + item.quantity, 0)
+    this.detailedItems().reduce((sum, item) => sum + item.quantity, 0)
   );
 
   readonly subtotal = computed(() =>
@@ -135,9 +101,15 @@ export class CartService {
 
   readonly lineCount = computed(() => this.detailedItems().length);
 
+  constructor() {
+    this.hydrateFromCatalog();
+  }
+
   addItem(productId: string, variantId: string, quantity = 1): boolean {
-    const product = findProduct(productId);
-    const variant = product ? findVariant(product, variantId) : undefined;
+    const product = this.catalog.getCachedProduct(productId);
+    const variant = product
+      ? product.variants.find((entry) => entry.id === variantId)
+      : undefined;
     if (!product || !variant || variant.stock <= 0) {
       return false;
     }
@@ -150,7 +122,7 @@ export class CartService {
       );
 
       if (index === -1) {
-        return sanitizeItems([
+        return this.mergeItems([
           ...items,
           { productId, variantId, quantity: amount },
         ]);
@@ -164,7 +136,7 @@ export class CartService {
             }
           : item
       );
-      return sanitizeItems(next);
+      return this.mergeItems(next);
     });
 
     this.persist();
@@ -182,8 +154,10 @@ export class CartService {
   }
 
   updateQuantity(productId: string, variantId: string, quantity: number): void {
-    const product = findProduct(productId);
-    const variant = product ? findVariant(product, variantId) : undefined;
+    const product = this.catalog.getCachedProduct(productId);
+    const variant = product
+      ? product.variants.find((entry) => entry.id === variantId)
+      : undefined;
     if (!product || !variant || variant.stock <= 0) {
       this.removeItem(productId, variantId);
       return;
@@ -223,7 +197,6 @@ export class CartService {
     if (!item) {
       return;
     }
-    // Minimum stays at 1 — explicit remove required
     if (item.quantity <= 1) {
       return;
     }
@@ -235,18 +208,85 @@ export class CartService {
     this.persist();
   }
 
+  /** Drop lines that no longer resolve after catalog hydration. */
+  pruneStaleLines(): void {
+    if (!this.hydratedSignal()) {
+      return;
+    }
+    const valid = this.itemsSignal().filter(
+      (item) => this.toDetailedItem(item) != null
+    );
+    if (valid.length !== this.itemsSignal().length) {
+      this.itemsSignal.set(valid);
+      this.persist();
+    }
+  }
+
+  private hydrateFromCatalog(): void {
+    const ids = this.itemsSignal().map((item) => item.productId);
+    this.catalog.resolveProductsByIds(ids).subscribe({
+      next: () => {
+        this.hydratedSignal.set(true);
+        this.pruneStaleLines();
+      },
+      error: () => {
+        this.hydratedSignal.set(true);
+      },
+    });
+  }
+
+  private mergeItems(items: CartItem[]): CartItem[] {
+    const cleaned: CartItem[] = [];
+    for (const item of items) {
+      if (!isCartItem(item)) {
+        continue;
+      }
+      const product = this.catalog.getCachedProduct(item.productId);
+      const variant = product?.variants.find((v) => v.id === item.variantId);
+      if (this.hydratedSignal() && (!product || !variant || variant.stock <= 0)) {
+        continue;
+      }
+
+      const maxStock = variant?.stock ?? item.quantity;
+      const quantity = Math.min(Math.max(1, Math.floor(item.quantity)), maxStock);
+      const existingIndex = cleaned.findIndex(
+        (entry) =>
+          entry.productId === item.productId && entry.variantId === item.variantId
+      );
+      if (existingIndex >= 0) {
+        cleaned[existingIndex] = {
+          ...cleaned[existingIndex],
+          quantity: Math.min(
+            cleaned[existingIndex].quantity + quantity,
+            maxStock
+          ),
+        };
+      } else {
+        cleaned.push({
+          productId: item.productId,
+          variantId: item.variantId,
+          quantity,
+        });
+      }
+    }
+    return cleaned;
+  }
+
   private toDetailedItem(item: CartItem): DetailedCartItem | null {
-    const product = findProduct(item.productId);
+    const product = this.catalog.getCachedProduct(item.productId);
     if (!product) {
       return null;
     }
 
-    const variant = findVariant(product, item.variantId);
+    const variant = product.variants.find((entry) => entry.id === item.variantId);
     if (!variant) {
       return null;
     }
 
-    const quantity = Math.min(Math.max(1, item.quantity), Math.max(variant.stock, 1));
+    const quantity = Math.min(
+      Math.max(1, item.quantity),
+      Math.max(variant.stock, 1)
+    );
     const imageUrl = getPrimaryImage(product);
     const imageAlt =
       product.images.find((image) => image.type === 'DEFAULT')?.alt ??

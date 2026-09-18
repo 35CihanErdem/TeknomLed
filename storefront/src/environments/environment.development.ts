@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
-  // Use Angular dev-server proxy (proxy.conf.json) so refresh cookies stay first-party.
+  // Empty = same-origin `/api/...` via Angular dev-server proxy → http://localhost:5223
   apiBaseUrl: '',
-  googleClientId: 'YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com',
+  googleClientId:
+    '204687023001-de4dpiiskrabj5t2gobr94fj2qa9jh8d.apps.googleusercontent.com',
 };

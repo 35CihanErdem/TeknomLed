@@ -7,6 +7,7 @@ using TeknomLed.Api.Authorization;
 using TeknomLed.Api.Middleware;
 using TeknomLed.Application.Options;
 using TeknomLed.Infrastructure;
+using TeknomLed.Infrastructure.Configuration;
 using TeknomLed.Infrastructure.Persistence;
 using CorsOptions = TeknomLed.Application.Options.CorsOptions;
 
@@ -47,6 +48,7 @@ builder.Services.AddTeknomLedAuthorization();
 
 var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
     ?? new JwtOptions();
+jwt.SigningKey = ConfigCrypto.UnprotectIfNeeded(jwt.SigningKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -103,6 +105,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
     await IdentitySeed.SeedAsync(db);
+    await CatalogSeed.SeedAsync(db);
 }
 
 app.Run();

@@ -1,8 +1,9 @@
-{
-  "/api": {
+[
+  {
+    "context": ["/api"],
     "target": "http://localhost:5223",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "warn"
   }
-}
+]

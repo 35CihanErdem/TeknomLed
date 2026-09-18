@@ -6,7 +6,7 @@
 
     <div class="products-page__cats">
       <app-category-navigation
-        [categories]="categories"
+        [categories]="categories()"
         [activeSlug]="filters().categorySlug"
         (categoryChange)="onCategoryChange($event)"
       />
@@ -51,16 +51,26 @@
   </app-container>
 
   <div class="products-page__catalogue">
-    <app-product-grid
-      [products]="sortedProducts()"
-      (clearFilters)="clearFilters()"
-    />
+    @if (loading()) {
+      <div class="products-page__state">
+        <p>Ürünler yükleniyor…</p>
+      </div>
+    } @else if (error()) {
+      <div class="products-page__state products-page__state--error">
+        <p>{{ error() }}</p>
+      </div>
+    } @else {
+      <app-product-grid
+        [products]="products()"
+        (clearFilters)="clearFilters()"
+      />
+    }
   </div>
 
   <app-product-filter
     [open]="filterOpen()"
     [filters]="filters()"
-    [applicationAreas]="applicationAreas"
+    [applicationAreas]="applicationAreas()"
     [kelvins]="kelvins"
     [ipClasses]="ipClasses"
     (closed)="closeFilterPanel()"

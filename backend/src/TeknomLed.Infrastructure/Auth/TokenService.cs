@@ -19,7 +19,10 @@ public sealed class TokenService : ITokenService
         _options = options.Value;
     }
 
-    public (string Token, DateTimeOffset ExpiresAt) CreateAccessToken(User user, IEnumerable<string> roles)
+    public (string Token, DateTimeOffset ExpiresAt) CreateAccessToken(
+        User user,
+        IEnumerable<string> roles,
+        IEnumerable<string> permissions)
     {
         if (string.IsNullOrWhiteSpace(_options.SigningKey) || _options.SigningKey.Length < 32)
         {
@@ -37,6 +40,11 @@ public sealed class TokenService : ITokenService
         foreach (var role in roles.Distinct())
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        foreach (var permission in permissions.Distinct())
+        {
+            claims.Add(new Claim("permission", permission));
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey));

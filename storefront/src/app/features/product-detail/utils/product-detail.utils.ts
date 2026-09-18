@@ -1,5 +1,4 @@
 import { Product, ProductImage, ProductVariant } from '../../products/models/product.model';
-import { MOCK_PRODUCTS } from '../../products/data/products.mock';
 
 export interface VariantSelection {
   kelvin: number | null;
@@ -13,10 +12,6 @@ export const KELVIN_LABELS: Record<number, string> = {
   4000: 'Doğal Beyaz',
   6500: 'Soğuk Beyaz',
 };
-
-export function findProductBySlug(slug: string): Product | undefined {
-  return MOCK_PRODUCTS.find((product) => product.slug === slug);
-}
 
 export function getGalleryImages(product: Product): ProductImage[] {
   const preferred = product.images.filter(
@@ -190,25 +185,4 @@ export function getStockLabel(stock: number): string {
     return 'Sınırlı stok';
   }
   return 'Stokta';
-}
-
-export function getRelatedProducts(product: Product, limit = 3): Product[] {
-  const sameCategory = MOCK_PRODUCTS.filter(
-    (item) =>
-      item.id !== product.id && item.category.slug === product.category.slug
-  );
-
-  const overlapping = MOCK_PRODUCTS.filter((item) => {
-    if (item.id === product.id) {
-      return false;
-    }
-    if (sameCategory.some((related) => related.id === item.id)) {
-      return false;
-    }
-    return item.applicationAreas.some((area) =>
-      product.applicationAreas.includes(area)
-    );
-  });
-
-  return [...sameCategory, ...overlapping].slice(0, limit);
 }

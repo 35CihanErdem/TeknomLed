@@ -22,7 +22,10 @@ public interface IPasswordHasherService
 
 public interface ITokenService
 {
-    (string Token, DateTimeOffset ExpiresAt) CreateAccessToken(User user, IEnumerable<string> roles);
+    (string Token, DateTimeOffset ExpiresAt) CreateAccessToken(
+        User user,
+        IEnumerable<string> roles,
+        IEnumerable<string> permissions);
     string CreateRefreshToken();
     string HashRefreshToken(string refreshToken);
 }

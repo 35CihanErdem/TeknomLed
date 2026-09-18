@@ -129,8 +129,16 @@
 }
 
 .auth-google {
-  min-height: 2.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   max-width: 24rem;
+  min-height: 2.75rem;
+}
+
+.auth-google > div {
+  margin-inline: auto;
 }
 
 .google-placeholder {

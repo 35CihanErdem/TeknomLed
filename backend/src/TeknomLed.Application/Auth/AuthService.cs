@@ -2,24 +2,13 @@ using System.Text.RegularExpressions;
 using TeknomLed.Application.Auth.Abstractions;
 using TeknomLed.Application.Auth.Dtos;
 using TeknomLed.Application.Options;
+using TeknomLed.Application.Persistence;
 using TeknomLed.Domain.Auth;
 using TeknomLed.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace TeknomLed.Application.Auth;
-
-public interface IAppDbContext
-{
-    DbSet<User> Users { get; }
-    DbSet<ExternalLogin> ExternalLogins { get; }
-    DbSet<Role> Roles { get; }
-    DbSet<Permission> Permissions { get; }
-    DbSet<UserRole> UserRoles { get; }
-    DbSet<RolePermission> RolePermissions { get; }
-    DbSet<RefreshSession> RefreshSessions { get; }
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-}
 
 public sealed class AuthService : IAuthService
 {
@@ -334,7 +323,13 @@ public sealed class AuthService : IAuthService
             ?? throw new AuthException("not_found", "Kullanıcı bulunamadı.", 404);
 
         var roles = user.UserRoles.Select(ur => ur.Role.Name).Distinct().OrderBy(x => x).ToList();
-        var (accessToken, accessExpires) = _tokenService.CreateAccessToken(user, roles);
+        var permissions = user.UserRoles
+            .SelectMany(ur => ur.Role.RolePermissions)
+            .Select(rp => rp.Permission.Name)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+        var (accessToken, accessExpires) = _tokenService.CreateAccessToken(user, roles, permissions);
         var refreshToken = _tokenService.CreateRefreshToken();
         var refreshExpires = DateTimeOffset.UtcNow.AddDays(Math.Max(1, _jwtOptions.RefreshTokenDays));
 

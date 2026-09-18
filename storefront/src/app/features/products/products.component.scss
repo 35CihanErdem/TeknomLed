@@ -23,6 +23,16 @@
   padding-inline: var(--container-pad);
 }
 
+.products-page__state {
+  padding: var(--space-8) 0;
+  color: var(--color-ink-muted);
+  font-family: var(--font-body);
+}
+
+.products-page__state--error {
+  color: var(--color-ink);
+}
+
 .active-filters {
   display: flex;
   flex-wrap: wrap;

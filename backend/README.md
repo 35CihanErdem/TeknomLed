@@ -1,6 +1,6 @@
 # TeknomLed Backend
 
-ASP.NET Core 8 Web API — identity & authentication foundation (Phase 7).
+ASP.NET Core 8 Web API — identity (Phase 7) + product catalog (Phase 8).
 
 ## Structure
 
@@ -45,6 +45,7 @@ Set via `appsettings.Development.json`, user-secrets, or environment variables:
 3. Server stores only **SHA-256 hash** of refresh tokens in `RefreshSessions`.
 4. Refresh rotates sessions; logout revokes the current session.
 5. Google ID token proves identity; TeknomLed issues its own session afterward.
+6. Access JWT includes **role** and **permission** claims for `[RequirePermission]`.
 
 Frontend permission checks are UX only. **Backend authorization is authoritative.**
 
@@ -55,6 +56,8 @@ Frontend permission checks are UX only. **Backend authorization is authoritative
 dotnet ef database update --project src/TeknomLed.Infrastructure --startup-project src/TeknomLed.Api
 dotnet run --project src/TeknomLed.Api --launch-profile http
 ```
+
+On startup the API applies migrations, seeds identity roles/permissions, then seeds **development catalog** products (idempotent).
 
 API default (http profile): `http://localhost:5223`  
 Swagger (Development): `/swagger`
@@ -73,12 +76,40 @@ Angular storefront proxies `/api` → `http://localhost:5223` in development.
 | GET | `/api/auth/me` | Bearer |
 | PUT | `/api/auth/profile` | Bearer |
 
+## Catalog endpoints (Phase 8)
+
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/api/products` | Public (paginated) |
+| GET | `/api/products/{slug}` | Public |
+| GET | `/api/products/{slug}/related` | Public |
+| POST | `/api/products/batch` | Public (cart hydrate) |
+| GET | `/api/categories` | Public |
+| GET | `/api/application-areas` | Public |
+| POST/PUT/DELETE | `/api/admin/products…` | PRODUCT_CREATE / PRODUCT_UPDATE |
+| POST/PUT | `/api/admin/categories…` | PRODUCT_CREATE / PRODUCT_UPDATE |
+
+**Semantics:** `Product.IsActive = false` means not publicly listed (draft/hidden). Soft-deactivate preferred over hard delete.
+
+**Media:** DB stores path/URL metadata only. `IMediaPathResolver` is the swap point for future S3/R2/CDN.
+
+**Seeded products are DEV/TEST data**, not the official customer catalogue.
+
+**Price/stock** returned by the API are for display; order acceptance must re-resolve them server-side (Orders phase).
+
+## Migrations
+
+1. `InitialIdentity`
+2. `CatalogFoundation`
+
 ## Tests
 
 ```bash
 dotnet test
 ```
 
-## Account linking note
+## Notes
 
-If a password account already exists for the **verified** Google email and has no Google `ExternalLogin`, the first Google sign-in attaches `ProviderSubject` to that user. Linking only happens after Google credential verification.
+- Guest browse / guest cart / guest checkout remain supported.
+- Phone profile completion flow from Phase 7 is unchanged.
+- Orders, Payments, Shipping, Admin UI, WhatsApp are not implemented here.

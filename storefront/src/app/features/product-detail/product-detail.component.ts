@@ -5,10 +5,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { map, of, switchMap } from 'rxjs';
 import { CartService } from '../../core/services/cart.service';
+import { ProductCatalogService } from '../../core/catalog/product-catalog.service';
 import { ContainerComponent } from '../../shared/components/container/container.component';
 import { LightComparisonComponent } from '../../shared/components/light-comparison/light-comparison.component';
 import { ProductGalleryComponent } from './components/product-gallery/product-gallery.component';
@@ -17,15 +18,14 @@ import { ProductTechSummaryComponent } from './components/product-tech-summary/p
 import { ProductSpecificationsComponent } from './components/product-specifications/product-specifications.component';
 import { ProductApplicationComponent } from './components/product-application/product-application.component';
 import { RelatedProductsComponent } from './components/related-products/related-products.component';
+import { Product } from '../products/models/product.model';
 import {
   VariantSelection,
   createInitialSelection,
   findMatchingVariant,
-  findProductBySlug,
   getApplicationImages,
   getGalleryImages,
   getGenuineLightPair,
-  getRelatedProducts,
   resolveSelection,
 } from './utils/product-detail.utils';
 
@@ -50,16 +50,12 @@ export class ProductDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cart = inject(CartService);
+  private readonly catalog = inject(ProductCatalogService);
 
-  private readonly slug = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
-    { initialValue: this.route.snapshot.paramMap.get('slug') ?? '' }
-  );
-
-  readonly product = computed(() => {
-    const slug = this.slug();
-    return slug ? findProductBySlug(slug) ?? null : null;
-  });
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly product = signal<Product | null>(null);
+  readonly relatedProducts = signal<Product[]>([]);
 
   readonly selection = signal<VariantSelection>({
     kelvin: null,
@@ -95,22 +91,44 @@ export class ProductDetailComponent {
     return product ? getApplicationImages(product) : [];
   });
 
-  readonly relatedProducts = computed(() => {
-    const product = this.product();
-    return product ? getRelatedProducts(product, 3) : [];
-  });
-
   constructor() {
     this.route.paramMap
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        const slug = params.get('slug') ?? '';
-        const product = findProductBySlug(slug);
-        this.galleryIndex.set(0);
-        this.addedFeedback.set(false);
-        if (product) {
-          this.selection.set(createInitialSelection(product.variants));
-        }
+      .pipe(
+        map((params) => params.get('slug') ?? ''),
+        switchMap((slug) => {
+          this.loading.set(true);
+          this.error.set(null);
+          this.galleryIndex.set(0);
+          this.addedFeedback.set(false);
+          this.relatedProducts.set([]);
+          if (!slug) {
+            this.product.set(null);
+            this.loading.set(false);
+            return of(null);
+          }
+          return this.catalog.getProductBySlug(slug);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (product) => {
+          this.product.set(product);
+          this.loading.set(false);
+          if (product) {
+            this.selection.set(createInitialSelection(product.variants));
+            this.catalog
+              .getRelatedProducts(product.slug, 3)
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: (related) => this.relatedProducts.set(related),
+              });
+          }
+        },
+        error: () => {
+          this.product.set(null);
+          this.loading.set(false);
+          this.error.set('Ürün yüklenemedi.');
+        },
       });
 
     this.destroyRef.onDestroy(() => {
