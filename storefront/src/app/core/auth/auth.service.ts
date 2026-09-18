@@ -56,6 +56,19 @@ export class AuthService {
   readonly roles = computed(() => this.userSignal()?.roles ?? []);
   readonly permissions = computed(() => this.userSignal()?.permissions ?? []);
 
+  can(permission: string): boolean {
+    const set = this.permissions();
+    return set.some((p) => p.toUpperCase() === permission.toUpperCase());
+  }
+
+  canAny(...permissions: string[]): boolean {
+    return permissions.some((p) => this.can(p));
+  }
+
+  canAll(...permissions: string[]): boolean {
+    return permissions.every((p) => this.can(p));
+  }
+
   bootstrap(): Observable<AuthUser | null> {
     return this.refreshSession().pipe(
       switchMap((token) => {

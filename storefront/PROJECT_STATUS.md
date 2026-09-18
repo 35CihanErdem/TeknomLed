@@ -26,91 +26,82 @@ Status: Complete
 
 ### Google Sign-In (local)
 - GIS ID-token flow wired end-to-end (no Client Secret / no OAuth redirect code flow)
-- Angular `googleClientId` in `environment.development.ts` / `environment.ts`
-- Backend audience: `Google:ClientId` in `appsettings.Development.json` / `appsettings.json`
-- Same Web Client ID on both sides; Authorized JS origin: `http://localhost:4200`
-- Backend validates signature/audience/issuer/expiry via `Google.Apis.Auth`
+- Angular `googleClientId` + backend `Google:ClientId` (same Web Client ID)
 - External identity: `ExternalLogin(Provider=GOOGLE, ProviderSubject=sub)`
-- New Google users → CUSTOMER; missing phone → `profileComplete=false` → `/account/complete-profile`
+- Missing phone → `profileComplete=false` → `/account/complete-profile`
 
 ## Phase 8 — Production Catalog Backend + Media Foundation
 Status: Complete
 
-Current Phase: PHASE 8 — PRODUCTION CATALOG BACKEND + MEDIA FOUNDATION
+### Runtime verified
+- PostgreSQL connection (UTF8 DB)
+- EF migrations (`InitialIdentity`, `CatalogFoundation`)
+- CatalogSeed (12 DEV products)
+- `GET /api/products` (+ filters/pagination)
+- Angular → API via `/api` proxy → `http://localhost:5223`
+- Google authentication end-to-end
 
-### Migration
-- `20260917195403_CatalogFoundation` (after `InitialIdentity`)
+### Notes
+- Seeded products are DEV/TEST data, not official customer catalogue
+- Media: path/URL metadata only (no binaries in PostgreSQL)
+- Price/stock on storefront are display-only; Orders must re-resolve server-side
 
-### Database entities
-- Category, Product, ProductVariant, ApplicationArea
-- ProductApplicationArea, ProductSpecification, ProductMedia
-- Money: `ProductVariant.Price` as `decimal(18,2)` — never float
-- **IsActive on Product** = public visibility (draft/hidden vs published). No separate CMS workflow.
-- Media stores **path/URL + metadata only** — no binaries/base64 in PostgreSQL
+## Phase 9A — Admin Panel Foundation + Access Control
+Status: Complete
 
-### Public API
-| Method | Path |
-|--------|------|
-| GET | `/api/products` (paginated + filters) |
-| GET | `/api/products/{slug}` |
-| GET | `/api/products/{slug}/related` |
-| POST | `/api/products/batch` |
-| GET | `/api/categories` |
-| GET | `/api/application-areas` |
+Current Phase: PHASE 9A — ADMIN FOUNDATION
 
-Filters (PostgreSQL): category, applicationArea[], kelvin[], powerRanges[], ip[], priceRanges[], min/maxPrice, featured, sort, page, pageSize (max 48).
+### Admin routes (lazy)
+- `/admin` — dashboard (permission-gated sections)
+- `/admin/catalog/products` | `.../new` | `.../:id`
+- `/admin/catalog/categories`
+- `/admin/catalog/application-areas`
+- `/admin/users`
+- `/admin/access/roles` | `/admin/access/permissions`
+- `/admin/access-denied`
 
-### Admin API foundation (no Admin UI)
-| Method | Path | Permission |
-|--------|------|------------|
-| POST | `/api/admin/products` | PRODUCT_CREATE |
-| PUT | `/api/admin/products/{id}` | PRODUCT_UPDATE |
-| DELETE | `/api/admin/products/{id}` | PRODUCT_UPDATE (soft deactivate) |
-| POST | `/api/admin/categories` | PRODUCT_CREATE |
-| PUT | `/api/admin/categories/{id}` | PRODUCT_UPDATE |
+### Permission strategy (UX only; API authoritative)
+- `AuthService.can` / `canAny` / `canAll`
+- `permissionGuard` / `anyPermissionGuard` / `adminAreaGuard`
+- Sidebar + dashboard sections filtered by permissions
+- Unauthenticated → `/account/login`
+- Authenticated without permission → `/admin/access-denied`
 
-JWT now includes `permission` claims so `[RequirePermission]` works.
+### Phase 9A UI scope
+- Real admin shell (sidebar / header / content)
+- No fake KPIs, charts, users, orders, or activity
+- Catalog/Users/Access pages are intentional placeholders until 9B/9D
 
-### Angular
-- `ProductCatalogService` — centralized HttpClient catalog access + product cache
-- Migrated: `/products`, `/products/:slug`, Home featured, related products, Cart resolve
-- Cart still stores `{ productId, variantId, quantity }` in localStorage; display data resolved async from API
-- Stale/missing/inactive product or variant lines are pruned after hydration (no crash)
+### Backend gaps → Phase 9B (catalog CRUD UI)
+Existing admin catalog API:
+- `POST/PUT/DELETE /api/admin/products` (create/update/deactivate)
+- `POST/PUT /api/admin/categories`
+Missing for full admin catalog UI:
+- Admin product list / get-by-id (incl. inactive/drafts)
+- Admin category list (incl. inactive)
+- Application-area admin create/update/deactivate
+- Standalone variant / specification / media admin endpoints (today only nested in product create/update payload)
+- Optional: category soft-deactivate endpoint
 
-### Media strategy
-- `IMediaPathResolver` boundary (current: passthrough local/asset paths)
-- Future: S3 / Cloudflare R2 / CDN without changing Product domain
-- LIGHT_ON/OFF comparison still requires genuine pair under official `/assets/images/products/.../light-off|on.*` paths; otherwise reserved placeholder (no CSS fake OFF)
+### Backend gaps → Phase 9D (users / access)
+Existing:
+- Auth: register/login/google/refresh/logout/me/profile
+- Roles/permissions seeded in DB; JWT includes permission claims
+Missing:
+- User list / user detail
+- Assign/remove roles on a user
+- Role list / permission list
+- Role↔permission management APIs
 
-### Dev seed
-- 12 development products adapted from former Angular mocks
-- **NOT** official customer catalog
-- Reuses existing `/assets/images/home/...` paths only
-
-### Price / stock rule
-- Storefront displays backend values only
-- Orders (future) must re-resolve product, variant, price, stock on the server
-- Frontend never decides payment success
-
-### Still pending / deferred
-- Admin UI (Phase 9)
-- Object storage upload pipeline
-- Official customer catalogue & final photography
+### Still deferred
+- Phase 9B catalog CRUD screens
+- Phase 9D user/access APIs + UI
 - Orders / Payment / Shipping
-- Admin / Worker UI (beyond API foundation)
-- WhatsApp
-- Cart sync / merge after login
-- Server-side cart
+- Object storage upload
+- WhatsApp / cart merge / server-side cart
 
-### Build / test (Phase 8)
-- `dotnet build` — pass
+### Build / test (Phase 9A)
+- `npm run build` — pass
 - `dotnet test` — 20 tests pass
-- `npm run build` (storefront) — pass (verify after docs)
-
-### Manual setup
-1. PostgreSQL running with configured `DefaultConnection`
-2. Start API (`dotnet run --project src/TeknomLed.Api --launch-profile http`) — migrates + seeds catalog
-3. Start storefront (`npm start`) — proxy `/api` → `:5223`
-4. Google login: open `/account/login` — GIS button uses configured Web Client ID (see `GOOGLE_AUTH_SETUP.md`)
 
 See also: `GOOGLE_AUTH_SETUP.md`, `backend/README.md`

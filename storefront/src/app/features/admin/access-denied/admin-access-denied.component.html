@@ -1,0 +1,15 @@
+<section class="denied">
+  <p class="denied__eyebrow">Erişim</p>
+  <h1 class="denied__title">Access Denied</h1>
+  <p class="denied__text">
+    Bu sayfayı görüntülemek için gerekli izniniz yok. Frontend kontrolleri yalnızca
+    arayüz içindir; yetki her zaman sunucu tarafında doğrulanır.
+  </p>
+  @if (from()) {
+    <p class="denied__from">İstenen yol: <code>{{ from() }}</code></p>
+  }
+  <div class="denied__actions">
+    <a routerLink="/admin" class="denied__link">Admin ana sayfa</a>
+    <a routerLink="/" class="denied__link denied__link--muted">Mağazaya dön</a>
+  </div>
+</section>

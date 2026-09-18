@@ -1,0 +1,24 @@
+<section class="dash">
+  <header class="dash__intro">
+    <h2 class="dash__heading">Yönetim paneli</h2>
+    <p class="dash__lead">
+      Yetkinize açık operasyon alanları. Sahte metrik veya demo veri gösterilmez.
+    </p>
+  </header>
+
+  <div class="dash__grid">
+    @for (section of sections(); track section.path) {
+      <article class="dash__section">
+        <h3 class="dash__section-title">{{ section.title }}</h3>
+        <p class="dash__section-text">{{ section.description }}</p>
+        <a [routerLink]="section.path" class="dash__section-link">
+          {{ section.cta }}
+        </a>
+      </article>
+    } @empty {
+      <p class="dash__empty">
+        Bu hesap için görüntülenebilir yönetim bölümü yok.
+      </p>
+    }
+  </div>
+</section>

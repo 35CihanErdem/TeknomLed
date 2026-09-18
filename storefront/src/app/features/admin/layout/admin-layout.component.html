@@ -1,0 +1,77 @@
+<div class="admin" [class.admin--nav-open]="sidebarOpen()">
+  <aside class="admin__sidebar" aria-label="Admin navigation">
+    <div class="admin__brand">
+      <a routerLink="/admin" class="admin__brand-link" (click)="closeSidebar()">
+        <span class="admin__brand-mark">TeknomLed</span>
+        <span class="admin__brand-sub">Admin</span>
+      </a>
+    </div>
+
+    <nav class="admin__nav">
+      @for (group of navGroups(); track group.label) {
+        <div class="admin__nav-group">
+          <p class="admin__nav-label">{{ group.label }}</p>
+          <ul class="admin__nav-list">
+            @for (item of group.items; track item.path) {
+              <li>
+                <a
+                  [routerLink]="item.path"
+                  routerLinkActive="is-active"
+                  [routerLinkActiveOptions]="{ exact: item.path === '/admin' }"
+                  class="admin__nav-link"
+                  (click)="closeSidebar()"
+                >
+                  {{ item.label }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </nav>
+
+    <div class="admin__sidebar-foot">
+      <a routerLink="/" class="admin__storefront-link" (click)="closeSidebar()">
+        Mağazaya dön
+      </a>
+    </div>
+  </aside>
+
+  @if (sidebarOpen()) {
+    <button
+      type="button"
+      class="admin__backdrop"
+      aria-label="Menüyü kapat"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <div class="admin__main">
+    <header class="admin__header">
+      <button
+        type="button"
+        class="admin__menu-btn"
+        (click)="toggleSidebar()"
+        aria-label="Menüyü aç"
+      >
+        Menü
+      </button>
+      <div class="admin__header-text">
+        <p class="admin__eyebrow">Yönetim</p>
+        <h1 class="admin__title">{{ pageTitle() }}</h1>
+      </div>
+      <div class="admin__header-user">
+        @if (user(); as u) {
+          <span class="admin__user-name">{{ u.fullName }}</span>
+          <button type="button" class="admin__logout" (click)="logout()">
+            Çıkış
+          </button>
+        }
+      </div>
+    </header>
+
+    <main class="admin__content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
